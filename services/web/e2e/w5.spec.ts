@@ -303,13 +303,13 @@ test.describe("cash out", () => {
     await page.goto("/app/cashout");
     await page.getByRole("button", { name: /^Send to/ }).click();
     await expect(page.getByRole("option")).toHaveText([
+      "NEAR",
       "Base",
       "Arbitrum",
       "Optimism",
       "Polygon",
       "Solana",
       "Ethereum",
-      "NEAR",
     ]);
     await page.keyboard.press("Escape");
     await ask(page, "0", "Base", "0x123");

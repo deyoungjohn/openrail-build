@@ -150,17 +150,20 @@ export function revenueSummary(earnings: readonly Earning[], nowMs: number): Rev
 export function lastSevenDays(
   earnings: readonly Earning[],
   nowMs: number,
-): { label: string; count: number }[] {
+): { label: string; count: number; cents: bigint; at: number }[] {
   const startOfToday = Math.floor(nowMs / DAY_MS) * DAY_MS;
   const days = Array.from({ length: 7 }, (_, i) => {
     const at = startOfToday - (6 - i) * DAY_MS;
-    return { at, label: "SMTWTFS"[new Date(at).getUTCDay()] ?? "", count: 0 };
+    return { at, label: "SMTWTFS"[new Date(at).getUTCDay()] ?? "", count: 0, cents: 0n };
   });
   for (const e of earnings) {
     const d = days.find((x) => e.time >= x.at && e.time < x.at + DAY_MS);
-    if (d) d.count += 1;
+    if (d) {
+      d.count += 1;
+      d.cents += e.cents;
+    }
   }
-  return days.map(({ label, count }) => ({ label, count }));
+  return days.map(({ label, count, cents, at }) => ({ label, count, cents, at }));
 }
 
 export interface OverviewRow {

@@ -76,6 +76,9 @@ test.describe("signed-in journey on the mock API", () => {
 
     await page.goto("/app/cashout");
     await page.getByLabel("Amount").fill("2");
+    // NEAR is the default destination: pick Base for an EVM address.
+    await page.getByRole("button", { name: /^Send to/ }).click();
+    await page.getByRole("option", { name: "Base" }).click();
     await page.getByLabel("Address").fill("0x53C5D39A5828BaDf817E40f22d75d96D731f8239");
     await page.getByRole("button", { name: "Get quote" }).click();
     await expect(page.getByRole("region", { name: "What it costs" })).toContainText("$0.01");

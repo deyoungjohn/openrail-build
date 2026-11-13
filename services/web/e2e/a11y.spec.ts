@@ -91,6 +91,9 @@ test.describe("reduced motion stops the loading animations", () => {
 
     await page.goto("/app/cashout");
     await page.getByLabel("Amount").fill("2");
+    // NEAR is the default destination: pick Base for an EVM address.
+    await page.getByRole("button", { name: /^Send to/ }).click();
+    await page.getByRole("option", { name: "Base" }).click();
     await page.getByLabel("Address").fill(SIGNER);
     await page.getByRole("button", { name: "Get quote" }).click();
     const busy = page.getByRole("button", { name: "Getting your quote" });
@@ -136,6 +139,8 @@ test.describe("tab order follows the visual order", () => {
       "What this invoice says",
       "Wallet",
       /^Pay with/,
+      // USDC on NEAR is preselected, so the network select is there from the start.
+      /^Network/,
     ]);
 
     await pickRoute(page, "USDC on Base");

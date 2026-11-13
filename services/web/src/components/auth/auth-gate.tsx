@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { dashClient } from "@/lib/client";
 import { copy } from "@/copy";
 import { Button } from "../ui/button";
 import { PageSkeleton } from "../ui/page-skeleton";
@@ -12,6 +14,21 @@ import { ErrorNote } from "@/components/ui/error-note";
 export function AuthGate({ children }: { children: ReactNode }) {
   const { state, signIn, hint, cancelSignIn, retry } = useAuth();
   const [busy, setBusy] = useState(false);
+  const router = useRouter();
+  // Right after signing in (not on a reload of a signed-in page): a new business starts at onboarding, an existing
+  // one at the dashboard, whatever page the sign-in started from.
+  const justSignedIn = useRef(false);
+  useEffect(() => {
+    if (state.status !== "signedIn" || !justSignedIn.current) return;
+    justSignedIn.current = false;
+    void dashClient.business
+      .get()
+      .then((b) => {
+        const isNew = b.legal_name.trim() === "" || b.payout_account.trim() === "";
+        router.replace(isNew ? "/app/onboarding" : "/app");
+      })
+      .catch(() => router.replace("/app/onboarding"));
+  }, [state.status, router]);
 
   if (state.status === "loading") return <PageSkeleton />;
   if (state.status === "error")
@@ -41,6 +58,7 @@ export function AuthGate({ children }: { children: ReactNode }) {
             loading={busy}
             onClick={async () => {
               setBusy(true);
+              justSignedIn.current = true;
               try {
                 await signIn();
               } finally {

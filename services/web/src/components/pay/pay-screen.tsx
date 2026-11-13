@@ -357,12 +357,18 @@ function SessionView({
   if (stage === "paid")
     return (
       <div className="space-y-4">
-        <div className="surface-card space-y-3 p-6" role="status">
-          <p className="flex items-center gap-2 text-[20px] font-semibold">
-            <CheckCircle2 size={22} strokeWidth={1.5} className="text-success-text" aria-hidden />
-            {p.paidTitle}
+        <div
+          className="surface-card flex aspect-square max-h-[320px] flex-col items-center justify-center gap-3 p-6 text-center"
+          role="status"
+        >
+          <span className="grid size-16 place-items-center rounded-full bg-[color-mix(in_srgb,var(--success)_14%,transparent)]">
+            <CheckCircle2 size={34} strokeWidth={1.5} className="text-success-text" aria-hidden />
+          </span>
+          <p className="text-[22px] leading-7 font-semibold">{p.paidTitle}</p>
+          <p className="tabular text-[28px] leading-8 font-bold">${session.amount_usd}</p>
+          <p className="max-w-[28ch] text-[14px] leading-5 text-muted">
+            {p.paidBody()}
           </p>
-          <p className="text-[15px]">{p.paidBody(session.amount_usd)}</p>
         </div>
         {hashes.origin.length + hashes.near.length > 0 ? (
           <Card title={p.proofTitle}>
@@ -1085,6 +1091,7 @@ function PayFlow({ tokenId, source }: { tokenId: string; source: PayScreenSource
         open={dialog && legs.length > 0}
         onClose={() => setDialog(false)}
         title={p.detailsTitle}
+        compact={legs.length > 0 && legs.every((l) => l.stage === "paid")}
       >
         {prices}
       </PaymentDialog>

@@ -3,7 +3,7 @@
 import { Receipt } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Cell, Pie, PieChart } from "recharts";
+import { Cell, Pie, PieChart, Tooltip as ChartTooltip } from "recharts";
 import { copy } from "@/copy";
 import { cn } from "@/lib/cn";
 import {
@@ -298,6 +298,27 @@ function Activity({ earnings }: { earnings: readonly Earning[] }) {
   );
 }
 
+/** Hover on a slice: its name and its share of the total. */
+function sliceTip(total: bigint, nameOf: (key: string) => string) {
+  return function SliceTip({
+    active,
+    payload,
+  }: {
+    active?: boolean;
+    payload?: { payload?: { key?: string; value?: number } }[];
+  }) {
+    const item = payload?.[0]?.payload;
+    if (!active || item?.key === undefined || item.key === "none" || total === 0n) return null;
+    const pct = ((item.value ?? 0) / Number(total)) * 100;
+    return (
+      <div className="rounded-lg border border-border bg-surface px-2.5 py-1.5 text-[12px]">
+        <span className="font-medium">{nameOf(item.key)}</span>
+        <span className="tabular text-muted"> · {pct.toFixed(pct >= 10 ? 0 : 1)}%</span>
+      </div>
+    );
+  };
+}
+
 function Streams({
   earnings,
   failedStreams,
@@ -309,15 +330,17 @@ function Streams({
   const data = byStream(earnings);
   const total = data.reduce((n, s) => n + s.cents, 0n);
   const label = data.map((s) => `${d.streamLabels[s.stream]}: ${formatUsd(s.cents)}`).join(", ");
+  const TIP = sliceTip(total, (k) => d.streamLabels[k as Stream] ?? k);
   return (
-    <Card title={d.streamsTitle} info={d.streamsInfo}>
-      <div className="flex items-center gap-4">
+    <Card title={d.streamsTitle} info={d.streamsInfo} className="h-full">
+      <div className="flex h-[150px] items-center gap-4">
         <PieChart width={120} height={120} role="img" aria-label={label}>
           <Pie
             data={
               total === 0n
-                ? [{ stream: "none", value: 1, color: "var(--surface-2)" }]
+                ? [{ key: "none", stream: "none", value: 1, color: "var(--surface-2)" }]
                 : data.map((s) => ({
+                    key: s.stream,
                     stream: s.stream,
                     value: Number(s.cents),
                     color: STREAM_COLOR[s.stream],
@@ -336,6 +359,7 @@ function Streams({
               <Cell key={i} fill={m.color} />
             ))}
           </Pie>
+          <ChartTooltip content={TIP as never} isAnimationActive={false} />
         </PieChart>
         {failedStreams.length > 0 ? (
           <p className="text-[12px] text-muted">Some payment sources could not be loaded.</p>
@@ -378,15 +402,16 @@ function PaidFrom({ earnings }: { earnings: readonly Earning[] }) {
   const name = (chain: string) => CHAINS[chain as keyof typeof CHAINS] ?? chain;
   const colour = (chain: string) => CHAIN_COLOR[chain] ?? "var(--text-muted)";
   const label = data.map((s) => `${name(s.chain)}: ${formatUsd(s.cents)}`).join(", ");
+  const TIP = sliceTip(total, name);
   return (
-    <Card title={d.paidFrom} info={d.paidFromInfo}>
-      <div className="flex items-center gap-4">
+    <Card title={d.paidFrom} info={d.paidFromInfo} className="h-full">
+      <div className="flex h-[150px] items-center gap-4">
         <PieChart width={120} height={120} role="img" aria-label={label}>
           <Pie
             data={
               total === 0n
-                ? [{ chain: "none", value: 1 }]
-                : data.map((s) => ({ chain: s.chain, value: Number(s.cents) }))
+                ? [{ key: "none", chain: "none", value: 1 }]
+                : data.map((s) => ({ key: s.chain, chain: s.chain, value: Number(s.cents) }))
             }
             dataKey="value"
             innerRadius={36}
@@ -398,6 +423,7 @@ function PaidFrom({ earnings }: { earnings: readonly Earning[] }) {
               <Cell key={i} fill={s.chain === "none" ? "var(--surface-2)" : colour(s.chain)} />
             ))}
           </Pie>
+          <ChartTooltip content={TIP as never} isAnimationActive={false} />
         </PieChart>
         {total === 0n ? <p className="caption">{d.noPayments}</p> : null}
         <ul className="min-w-0 flex-1 space-y-1.5 text-[14px]">
