@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * The browser's own Solana wallet (Phantom, Solflare, Backpack): no WalletConnect, nothing loaded until the person
+ * The browser's own Solana wallet (Phantom, Jupiter, Solflare, Backpack): no WalletConnect, nothing loaded until the person
  * connects. The transfer is built with @solana/web3.js, imported only when a payment is sent.
  */
 import {
@@ -27,11 +27,20 @@ export function injectedSolana(): InjectedSolana | null {
   if (typeof window === "undefined") return null;
   const w = window as unknown as {
     phantom?: { solana?: InjectedSolana };
+    jupiter?: InjectedSolana & { solana?: InjectedSolana };
     solflare?: InjectedSolana;
     backpack?: InjectedSolana;
     solana?: InjectedSolana;
   };
-  return w.phantom?.solana ?? w.solflare ?? w.backpack ?? w.solana ?? null;
+  return (
+    w.phantom?.solana ??
+    w.jupiter?.solana ??
+    w.jupiter ??
+    w.solflare ??
+    w.backpack ??
+    w.solana ??
+    null
+  );
 }
 
 interface SolanaState {

@@ -1,0 +1,18 @@
+# Openrail
+
+> Stablecoin invoices and checkout for businesses, booked on NEAR. Clients pay from eight chains (NEAR, Base, Arbitrum, Ethereum, Solana, Polygon, Optimism, BNB Chain); the business receives USDC on the chain it chooses. Each invoice or checkout has its own account on NEAR, and every payment is booked by the Openrail contract (openrail.near), where anyone can check it.
+
+## Proof
+- [Transactions on NEAR mainnet (page)](/proof): recent invoices, checkouts and payments with explorer links.
+- [Transactions (JSON)](/proof.json): the same list as data.
+
+## Products
+- Invoices: bill a client with lines and a due date; they pay from any supported chain.
+- Checkout: a hosted pay page per order, for Shopify, WooCommerce or any store through the API.
+- Agent MCP: an MCP server so an AI agent can issue invoices, open checkouts and check payments.
+
+## Developers
+- [Documentation](https://github.com/deyoungjohn/openrail/tree/main/docs)
+- [API reference (OpenAPI)](https://github.com/deyoungjohn/openrail/blob/main/services/api/openapi.json)
+- [Source code](https://github.com/deyoungjohn/openrail)
+- [Limitations](https://github.com/deyoungjohn/openrail/blob/main/docs/src/core/LIMITATIONS.md)
