@@ -399,3 +399,37 @@ dialog.overlay::backdrop {
     transform: translateX(-50%);
   }
 }
+
+/* Landing globe: the "payment settled" chip that rises where the globe was tapped. */
+.globe-chip {
+  position: absolute;
+  z-index: 3;
+  pointer-events: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font: 12px "JetBrains Mono", ui-monospace, monospace;
+  color: var(--text);
+  white-space: nowrap;
+  animation: globe-chip 2.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.globe-chip i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.globe-chip b {
+  color: var(--accent-text);
+  font-weight: 500;
+}
+@keyframes globe-chip {
+  0% { opacity: 0; transform: translate(-50%, 0) scale(0.9); }
+  12% { opacity: 1; transform: translate(-50%, -16px) scale(1); }
+  75% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -46px); }
+}

@@ -128,7 +128,7 @@ export function PaymentDialog({
           // Liquid glass like the other pop-ups; the fill is the surface at 80% so the prices and steps stay easy to
           // read over the dimmed page (the token is changed here, not the background of the component).
           compact
-            ? "glass relative z-10 my-auto w-full max-w-[400px] rounded-[28px] p-6 [--pop-bg:color-mix(in_srgb,var(--surface)_92%,transparent)]"
+            ? "glass relative z-10 my-auto w-full max-w-[400px] rounded-[28px]! p-6 [--pop-bg:color-mix(in_srgb,var(--surface)_92%,transparent)]"
             : "glass relative z-10 my-auto w-full max-w-4xl p-4 sm:p-6 [--pop-bg:color-mix(in_srgb,var(--surface)_80%,transparent)]",
           "transition-[opacity,transform] duration-[var(--dur-slow)] ease-[var(--ease)]",
           shown ? "translate-y-0 scale-100 opacity-100" : "translate-y-4 scale-[0.97] opacity-0",

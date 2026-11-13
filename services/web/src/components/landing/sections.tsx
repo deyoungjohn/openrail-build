@@ -2,9 +2,11 @@ import { ArrowRight, ArrowUpRight, ExternalLink, ShieldCheck } from "lucide-reac
 import Link from "next/link";
 import { BrandMark } from "@/components/brand";
 import { ChainIcon, CHAINS, type ChainId } from "@/components/ui/chain-badge";
-import { nearTxUrl, PROOF_ROWS } from "@/lib/proof-data";
+import { nearAccountUrl, nearTxUrl, PROOF_CONTRACT, PROOF_ROWS } from "@/lib/proof-data";
 import { CoinCards, FauxAgent, FauxDashboard, FauxInvoice, FauxPay, Toast } from "./faux";
+import { Globe } from "./globe/globe";
 import { MENUS, REPO_URL } from "./links";
+import { Reveal } from "./reveal";
 
 const PAY_CHAINS: ChainId[] = [
   "near",
@@ -17,55 +19,75 @@ const PAY_CHAINS: ChainId[] = [
   "bnb",
 ];
 
-/** Headline type: heavy, tight, upper case (the reference's display face, in Inter at 900). */
-const DISPLAY = "font-black uppercase tracking-[-0.045em] leading-[0.95]";
+/** DESIGN.md type scale. Display: the hero, 800, upper case, tracking -0.04em. */
+const DISPLAY = "font-extrabold uppercase tracking-[-0.04em] leading-[0.95]";
+/** H2 (landing section): clamp(28px, 4vw, 44px) / 1.05, 800, upper case, tracking -0.03em. */
+const H2 = "text-[clamp(28px,4vw,44px)] leading-[1.05] font-extrabold uppercase tracking-[-0.03em]";
+/** Card titles on the landing page: the H2 face, one step down. */
+const H2_CARD =
+  "text-[clamp(24px,2.6vw,32px)] leading-[1.05] font-extrabold uppercase tracking-[-0.03em]";
+/** Body large (landing): 18 / 28, 400. */
+const BODY_L = "text-[18px] leading-7 font-normal text-muted";
+/** Body: 15 / 24, 400. */
+const BODY = "text-[15px] leading-6 font-normal text-muted";
+/** Caption: 13 / 18, 300. */
+const CAPTION = "text-[13px] leading-[18px] font-light text-muted";
 
 export function Hero() {
   return (
     <section className="relative isolate overflow-hidden">
-      {/* Soft accent wash and a faint grid behind the headline. */}
+      {/* A faint grid behind the hero (no colour wash). */}
       <div
         aria-hidden
-        className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_50%_0%,var(--accent-soft),transparent_65%)]"
+        className="absolute inset-0 -z-10 [background-image:linear-gradient(var(--border)_1px,transparent_1px),linear-gradient(90deg,var(--border)_1px,transparent_1px)] [background-size:56px_56px] opacity-40 [mask-image:radial-gradient(ellipse_at_30%_20%,black,transparent_70%)]"
       />
-      <div
-        aria-hidden
-        className="absolute inset-0 -z-10 [background-image:linear-gradient(var(--border)_1px,transparent_1px),linear-gradient(90deg,var(--border)_1px,transparent_1px)] [background-size:56px_56px] opacity-40 [mask-image:radial-gradient(ellipse_at_50%_20%,black,transparent_70%)]"
-      />
-      <div className="mx-auto max-w-[1240px] px-4 pt-10 pb-0 text-center sm:px-6 sm:pt-16">
-        <p className="mx-auto inline-flex items-center gap-2 rounded-full border border-border bg-surface/80 p-1 pr-3 text-[13px]">
-          <span className="rounded-full bg-accent px-2.5 py-1 font-semibold text-on-accent">
-            Built on NEAR
-          </span>
-          <span className="text-accent-text">Stablecoin payments for businesses</span>
-        </p>
-        <h1
-          className={`mx-auto mt-6 max-w-[15ch] text-[clamp(40px,7.4vw,104px)] text-text ${DISPLAY}`}
-        >
-          Get paid in stablecoins. <span className="block text-accent">From any chain.</span>
-        </h1>
-        <p className="mx-auto mt-6 max-w-[56ch] text-[17px] leading-7 text-muted">
-          Invoices and checkout for businesses. Clients pay from eight chains; you receive USDC
-          where you choose, and every payment is proven on NEAR.
-        </p>
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-          <Link
-            href="/app"
-            className="group inline-flex h-14 items-center gap-3 rounded-full bg-accent py-2 pr-2 pl-6 text-[16px] font-semibold text-on-accent hover:bg-accent-hover"
-          >
-            Start for free
-            <span className="grid size-10 place-items-center rounded-full bg-on-accent text-accent transition-transform group-hover:rotate-45">
-              <ArrowUpRight aria-hidden size={18} />
-            </span>
-          </Link>
-          <Link
-            href="/proof"
-            className="inline-flex h-14 items-center gap-2 rounded-full border border-border bg-surface px-6 text-[16px] font-semibold hover:bg-surface-2"
-          >
-            <ShieldCheck aria-hidden size={18} className="text-accent" /> See the proof
-          </Link>
+      <div className="mx-auto max-w-[1240px] px-4 pt-10 sm:px-6 sm:pt-14">
+        <div className="grid items-center gap-8 lg:grid-cols-[1.15fr_1fr]">
+          <div>
+            <Reveal>
+              <p className="inline-flex items-center gap-2 rounded-full border border-border bg-surface p-1 pr-3 text-[13px] font-medium">
+                <span className="rounded-full bg-accent px-2.5 py-1 text-on-accent">
+                  Built on NEAR
+                </span>
+                <span className="text-accent-text">Stablecoin payments for businesses</span>
+              </p>
+            </Reveal>
+            <Reveal delay={80}>
+              <h1 className={`mt-6 text-[clamp(44px,7vw,96px)] text-text ${DISPLAY}`}>
+                Get paid in stablecoins. <span className="block text-accent">From any chain.</span>
+              </h1>
+            </Reveal>
+            <Reveal delay={160}>
+              <p className={`mt-6 max-w-[52ch] ${BODY_L}`}>
+                Invoices and checkout for businesses. Clients pay from eight chains; you receive
+                USDC where you choose, and every payment is proven on NEAR.
+              </p>
+            </Reveal>
+            <Reveal delay={240}>
+              <div className="mt-8 flex flex-wrap items-center gap-3">
+                <Link
+                  href="/app"
+                  className="group inline-flex h-14 items-center gap-3 rounded-full bg-accent py-2 pr-2 pl-6 text-[15px] font-medium text-on-accent hover:bg-accent-hover"
+                >
+                  Start for free
+                  <span className="grid size-10 place-items-center rounded-full bg-on-accent text-accent transition-transform group-hover:rotate-45">
+                    <ArrowUpRight aria-hidden size={18} />
+                  </span>
+                </Link>
+                <Link
+                  href="/proof"
+                  className="inline-flex h-14 items-center gap-2 rounded-full border border-border bg-surface px-6 text-[15px] font-medium hover:bg-surface-2"
+                >
+                  <ShieldCheck aria-hidden size={18} className="text-accent" /> See the proof
+                </Link>
+              </div>
+            </Reveal>
+          </div>
+          <Reveal delay={120} className="mx-auto w-full max-w-[560px]">
+            <Globe />
+          </Reveal>
         </div>
-        <div className="relative mx-auto mt-14 max-w-[1080px] text-left">
+        <Reveal delay={100} className="relative mx-auto mt-12 max-w-[1080px]">
           <FauxDashboard />
           <Toast
             className="absolute -top-12 -left-20 hidden xl:flex"
@@ -81,7 +103,7 @@ export function Hero() {
             amount="$7.00"
             chain="solana"
           />
-        </div>
+        </Reveal>
       </div>
     </section>
   );
@@ -92,11 +114,9 @@ export function ChainsRow() {
   return (
     <section aria-label="Chains clients pay from" className="border-y border-border bg-surface">
       <div className="mx-auto flex max-w-[1240px] flex-wrap items-center gap-x-10 gap-y-4 px-4 py-7 sm:px-6">
-        <p className="w-[180px] text-[13px] leading-5 text-muted">
-          Clients pay from the chain their money is on
-        </p>
+        <p className={`w-[180px] ${CAPTION}`}>Clients pay from the chain their money is on</p>
         {PAY_CHAINS.map((c) => (
-          <span key={c} className="flex items-center gap-2 text-[15px] font-semibold">
+          <span key={c} className="flex items-center gap-2 text-[15px] font-medium">
             <ChainIcon chain={c} size={26} /> {CHAINS[c]}
           </span>
         ))}
@@ -109,22 +129,26 @@ function Card({
   id,
   title,
   body,
+  delay = 0,
   children,
 }: {
   id?: string;
+  delay?: number;
   title: string;
   body: string;
   children: React.ReactNode;
 }) {
   return (
-    <article
-      id={id}
-      className="scroll-mt-24 overflow-hidden rounded-[28px] border border-border bg-surface p-7 sm:p-9"
-    >
-      <h3 className={`text-[clamp(26px,3vw,36px)] ${DISPLAY}`}>{title}</h3>
-      <p className="mt-3 max-w-[46ch] text-[15px] leading-6 text-muted">{body}</p>
-      <div className="mt-8 flex min-h-[250px] items-end justify-center">{children}</div>
-    </article>
+    <Reveal delay={delay}>
+      <article
+        id={id}
+        className="h-full scroll-mt-24 overflow-hidden rounded-[28px] border border-border bg-surface p-7 sm:p-9"
+      >
+        <h3 className={H2_CARD}>{title}</h3>
+        <p className={`mt-3 max-w-[46ch] ${BODY}`}>{body}</p>
+        <div className="mt-8 flex min-h-[250px] items-end justify-center">{children}</div>
+      </article>
+    </Reveal>
   );
 }
 
@@ -150,6 +174,7 @@ export function TwoCards() {
       </Card>
       <Card
         id="checkout"
+        delay={120}
         title="Accept stablecoins at checkout"
         body="A hosted checkout for every order: USDC or USDT from eight chains, settled in the asset you choose. Ready for Shopify and WooCommerce."
       >
@@ -184,11 +209,9 @@ export function Global() {
     <section className="mx-auto max-w-[1240px] px-4 sm:px-6" id="any-store">
       <div className="grid items-center gap-10 overflow-hidden rounded-[28px] border border-border bg-surface p-7 sm:p-10 lg:grid-cols-[1fr_1.2fr]">
         <div>
-          <p className="text-[14px] font-semibold text-accent-text">Global by default</p>
-          <h2 className={`mt-3 text-[clamp(26px,4.4vw,56px)] break-words ${DISPLAY}`}>
-            Sell everywhere. Get paid in one place.
-          </h2>
-          <p className="mt-5 max-w-[48ch] text-[15px] leading-6 text-muted">
+          <p className="text-[14px] font-medium text-accent-text">Global by default</p>
+          <h2 className={`mt-3 break-words ${H2}`}>Sell everywhere. Get paid in one place.</h2>
+          <p className={`mt-5 max-w-[48ch] ${BODY}`}>
             A buyer in Lagos pays from Solana, one in Austin from Base, one in Seoul from NEAR. You
             set one settlement asset and receive it, whatever chain they used. Any store can do it
             with one API call.
@@ -233,9 +256,9 @@ export function Global() {
             chain="near"
           />
           <p className="tabular absolute inset-x-0 bottom-0 text-center text-[13px] text-muted">
-            <span className="text-[44px] leading-none font-black tracking-tight text-text">8</span>{" "}
+            <span className="text-[36px] leading-[1.1] font-bold tracking-tight text-text">8</span>{" "}
             chains ·{" "}
-            <span className="text-[44px] leading-none font-black tracking-tight text-text">19</span>{" "}
+            <span className="text-[36px] leading-[1.1] font-bold tracking-tight text-text">19</span>{" "}
             payment routes
           </p>
         </div>
@@ -268,23 +291,23 @@ export function Growth() {
   ];
   return (
     <section className="mx-auto max-w-[1240px] px-4 py-24 sm:px-6">
-      <p className="text-[14px] font-semibold text-muted">Built for growth</p>
-      <h2 className={`mt-2 text-[clamp(26px,4.4vw,56px)] break-words ${DISPLAY}`}>
-        Take your business on chain
-      </h2>
-      <p className="mt-4 max-w-[56ch] text-[15px] leading-6 text-muted">
+      <p className="text-[14px] font-medium text-muted">Built for growth</p>
+      <h2 className={`mt-2 break-words ${H2}`}>Take your business on chain</h2>
+      <p className={`mt-4 max-w-[56ch] ${BODY}`}>
         Three ways in, one account. Every one of them books the money on NEAR, where anyone can
         check it.
       </p>
       <div className="mt-10 grid gap-6 md:grid-cols-3">
-        {cards.map((c) => (
-          <article key={c.id} id={c.id} className="scroll-mt-24">
-            <div className="grid h-[260px] place-items-center overflow-hidden rounded-[24px] bg-accent">
-              {c.art}
-            </div>
-            <h3 className={`mt-6 text-[26px] ${DISPLAY}`}>{c.title}</h3>
-            <p className="mt-2 text-[15px] leading-6 text-muted">{c.body}</p>
-          </article>
+        {cards.map((c, i) => (
+          <Reveal key={c.id} delay={i * 120}>
+            <article id={c.id} className="scroll-mt-24">
+              <div className="grid h-[260px] place-items-center overflow-hidden rounded-[24px] bg-accent">
+                {c.art}
+              </div>
+              <h3 className={`mt-6 ${H2_CARD}`}>{c.title}</h3>
+              <p className={`mt-2 ${BODY}`}>{c.body}</p>
+            </article>
+          </Reveal>
         ))}
       </div>
     </section>
@@ -308,17 +331,15 @@ export function Band() {
             strokeWidth="2"
           />
         </svg>
-        <h2 className={`mx-auto max-w-[18ch] text-[clamp(32px,5vw,64px)] ${DISPLAY}`}>
-          Stablecoin payments for growing businesses
-        </h2>
-        <p className="mx-auto mt-5 max-w-[50ch] text-[16px] leading-7 text-white/85">
+        <h2 className={`mx-auto max-w-[18ch] ${H2}`}>Stablecoin payments for growing businesses</h2>
+        <p className="mx-auto mt-5 max-w-[50ch] text-[18px] leading-7 font-normal text-white/85">
           Start with an invoice, add a store when you are ready. No card fees, no chargebacks, no
           custody: the money moves only as the contract allows.
         </p>
         <div className="mt-8 flex justify-center gap-3">
           <Link
             href="/app"
-            className="inline-flex h-12 items-center gap-2 rounded-full bg-white px-6 text-[15px] font-semibold text-accent"
+            className="inline-flex h-12 items-center gap-2 rounded-full bg-white px-6 text-[15px] font-medium text-accent"
           >
             Open the app <ArrowRight aria-hidden size={16} />
           </Link>
@@ -326,7 +347,7 @@ export function Band() {
             href={REPO_URL}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex h-12 items-center gap-2 rounded-full border border-white/40 px-6 text-[15px] font-semibold"
+            className="inline-flex h-12 items-center gap-2 rounded-full border border-white/40 px-6 text-[15px] font-medium"
           >
             Read the code
           </a>
@@ -366,12 +387,10 @@ export function OnChain() {
   return (
     <section className="py-24">
       <div className="mx-auto flex max-w-[1240px] flex-wrap items-end justify-between gap-4 px-4 sm:px-6">
-        <h2 className={`text-[clamp(26px,4.4vw,56px)] break-words ${DISPLAY}`}>
-          What the chain says
-        </h2>
+        <h2 className={`break-words ${H2}`}>What the chain says</h2>
         <Link
           href="/proof"
-          className="inline-flex items-center gap-1.5 text-[15px] font-semibold text-accent-text hover:underline"
+          className="inline-flex items-center gap-1.5 text-[15px] font-medium text-accent-text hover:underline"
         >
           Every transaction <ArrowRight aria-hidden size={16} />
         </Link>
@@ -421,7 +440,7 @@ export function LandingFooter() {
         </div>
         {MENUS.map((m) => (
           <div key={m.label}>
-            <p className="text-[13px] font-semibold text-muted">{m.label}</p>
+            <p className="text-[14px] font-medium text-muted">{m.label}</p>
             <ul className="mt-3 space-y-2">
               {m.items.map((it) => (
                 <li key={it.label}>
@@ -438,7 +457,7 @@ export function LandingFooter() {
           </div>
         ))}
         <div>
-          <p className="text-[13px] font-semibold text-muted">Proof</p>
+          <p className="text-[14px] font-medium text-muted">Proof</p>
           <ul className="mt-3 space-y-2 text-[14px]">
             <li>
               <Link href="/proof" className="hover:text-accent-text">
@@ -458,6 +477,31 @@ export function LandingFooter() {
         <a href={REPO_URL} target="_blank" rel="noreferrer" className="hover:text-text">
           GitHub
         </a>
+      </div>
+      {/* The name, large and quiet, then a rule and the contract every payment goes through. */}
+      <div className="mx-auto max-w-[1240px] overflow-hidden px-4 pt-6 pb-10 sm:px-6">
+        <p
+          aria-hidden
+          className="flex items-end leading-[0.8] font-extrabold tracking-[-0.04em] text-border [font-variant-caps:all-small-caps] text-[clamp(72px,19vw,260px)] select-none"
+        >
+          openrail
+          <span className="mb-[0.06em] ml-[0.04em] inline-block size-[0.14em] rounded-full bg-accent" />
+        </p>
+        <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-5 text-[13px] font-light text-muted">
+          <p>
+            Payments are booked by{" "}
+            <a
+              href={nearAccountUrl(PROOF_CONTRACT)}
+              target="_blank"
+              rel="noreferrer"
+              className="font-mono text-text hover:text-accent-text"
+            >
+              {PROOF_CONTRACT}
+            </a>{" "}
+            on NEAR mainnet.
+          </p>
+          <p>MIT licensed</p>
+        </div>
       </div>
     </footer>
   );

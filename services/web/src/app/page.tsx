@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { LandingNav } from "@/components/landing/nav";
+import { Reveal } from "@/components/landing/reveal";
 import {
   Band,
   ChainsRow,
@@ -23,12 +24,20 @@ export default function Landing() {
       <LandingNav />
       <main>
         <Hero />
-        <ChainsRow />
+        <Reveal>
+          <ChainsRow />
+        </Reveal>
         <TwoCards />
-        <Global />
+        <Reveal>
+          <Global />
+        </Reveal>
         <Growth />
-        <Band />
-        <OnChain />
+        <Reveal>
+          <Band />
+        </Reveal>
+        <Reveal>
+          <OnChain />
+        </Reveal>
       </main>
       <LandingFooter />
     </div>

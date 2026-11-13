@@ -366,9 +366,7 @@ function SessionView({
           </span>
           <p className="text-[22px] leading-7 font-semibold">{p.paidTitle}</p>
           <p className="tabular text-[28px] leading-8 font-bold">${session.amount_usd}</p>
-          <p className="max-w-[28ch] text-[14px] leading-5 text-muted">
-            {p.paidBody()}
-          </p>
+          <p className="max-w-[28ch] text-[14px] leading-5 text-muted">{p.paidBody()}</p>
         </div>
         {hashes.origin.length + hashes.near.length > 0 ? (
           <Card title={p.proofTitle}>
@@ -1013,7 +1011,12 @@ function PayFlow({ tokenId, source }: { tokenId: string; source: PayScreenSource
           {parts}
           {nextCard}
         </div>
-        <PaymentDialog open={dialog} onClose={() => setDialog(false)} title={p.detailsTitle}>
+        <PaymentDialog
+          open={dialog}
+          onClose={() => setDialog(false)}
+          title={p.detailsTitle}
+          compact={legs.length > 0 && legs.every((l) => l.stage === "paid")}
+        >
           {prices}
         </PaymentDialog>
       </>

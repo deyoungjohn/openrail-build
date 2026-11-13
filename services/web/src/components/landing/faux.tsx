@@ -35,7 +35,7 @@ export function Toast({
         <p className="text-[12.5px] font-semibold">{title}</p>
         <p className="text-[11.5px] text-muted">{sub}</p>
       </div>
-      <span className="tabular text-[13px] font-semibold text-success-text">{amount}</span>
+      <span className="tabular text-[13px] font-medium text-success-text">{amount}</span>
     </div>
   );
 }
@@ -156,7 +156,7 @@ export function FauxDashboard() {
                     <td className="hidden px-3 py-2 font-mono text-[11.5px] text-muted sm:table-cell">
                       {r.tx.slice(0, 10)}…
                     </td>
-                    <td className="tabular px-3 py-2 text-right font-semibold">
+                    <td className="tabular px-3 py-2 text-right font-medium">
                       {usd(r.amount_usd)}
                     </td>
                   </tr>
