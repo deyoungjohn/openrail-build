@@ -14,7 +14,7 @@ interface Scene {
  */
 function colors(): Record<string, string> {
   if (document.documentElement.dataset.theme === "dark")
-    return { ink: "#EDEBE6", dim: "#2F2F35", accent: "#86D99B", mint: "#86D99B", bg: "#0A0A0B" };
+    return { ink: "#EDEBE6", dim: "#2F2F35", accent: "#3f46fe", mint: "#3f46fe", bg: "#0A0A0B" };
   const css = getComputedStyle(document.documentElement);
   const v = (name: string, fallback: string) => css.getPropertyValue(name).trim() || fallback;
   return {

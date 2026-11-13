@@ -24,8 +24,8 @@ export default function ProofPage() {
       <LandingNav />
       <main className="mx-auto max-w-[1240px] px-4 pt-10 pb-24 sm:px-6">
         <p className="text-[14px] font-semibold text-accent-text">Proof</p>
-        <h1 className="mt-2 text-[clamp(36px,6vw,72px)] leading-[0.95] font-black tracking-[-0.045em] uppercase">
-          Every payment, on chain
+        <h1 className="mt-2 text-[clamp(36px,6vw,72px)] leading-[1] font-extrabold tracking-[-0.03em]">
+          Every Payment, On Chain
         </h1>
         <p className="mt-5 max-w-[64ch] text-[16px] leading-7 text-muted">
           The {PROOF_ROWS.length} most recent business transactions of the Openrail contract,{" "}

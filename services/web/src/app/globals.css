@@ -5,7 +5,7 @@
 /* Tokens: DESIGN.md sections 2 to 5. Light is :root, dark is [data-theme="dark"]. */
 :root {
   color-scheme: light;
-  --bg: #f7f8fa;
+  --bg: #e9ebef;
   --surface: #ffffff;
   --surface-2: #f1f3f7;
   --sidebar: #ffffff;
@@ -412,7 +412,10 @@ dialog.overlay::backdrop {
   border-radius: 999px;
   background: var(--surface);
   border: 1px solid var(--border);
-  font: 12px "JetBrains Mono", ui-monospace, monospace;
+  font:
+    12px "JetBrains Mono",
+    ui-monospace,
+    monospace;
   color: var(--text);
   white-space: nowrap;
   animation: globe-chip 2.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -428,10 +431,21 @@ dialog.overlay::backdrop {
   font-weight: 500;
 }
 @keyframes globe-chip {
-  0% { opacity: 0; transform: translate(-50%, 0) scale(0.9); }
-  12% { opacity: 1; transform: translate(-50%, -16px) scale(1); }
-  75% { opacity: 1; }
-  100% { opacity: 0; transform: translate(-50%, -46px); }
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 0) scale(0.9);
+  }
+  12% {
+    opacity: 1;
+    transform: translate(-50%, -16px) scale(1);
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -46px);
+  }
 }
 
 /* Landing page: the chains and coins slide left to right (the list is three copies; one third is one loop). */
@@ -441,5 +455,15 @@ dialog.overlay::backdrop {
   }
   to {
     transform: translateX(0);
+  }
+}
+
+/* Landing page: the chains and coins slide right to left (three copies; one third is one loop). */
+@keyframes landing-marquee-left {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-33.3333%);
   }
 }

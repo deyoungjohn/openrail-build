@@ -9,10 +9,9 @@ import { CountUp } from "./count-up";
 import { Reveal } from "./reveal";
 
 /** H2 (landing section): clamp(28px, 4vw, 44px) / 1.05, 800, upper case, tracking -0.03em. */
-const H2 = "text-[clamp(28px,4vw,44px)] leading-[1.05] font-extrabold uppercase tracking-[-0.03em]";
+const H2 = "text-[clamp(28px,4vw,44px)] leading-[1.05] font-extrabold tracking-[-0.03em]";
 /** Card titles on the landing page: the H2 face, one step down. */
-const H2_CARD =
-  "text-[clamp(24px,2.6vw,32px)] leading-[1.05] font-extrabold uppercase tracking-[-0.03em]";
+const H2_CARD = "text-[clamp(24px,2.6vw,32px)] leading-[1.05] font-extrabold tracking-[-0.03em]";
 /** Body large (landing): 18 / 28, 400. */
 const BODY_L = "text-[18px] leading-7 font-normal text-muted";
 /** Body: 15 / 24, 400. */
@@ -87,14 +86,14 @@ export function DashboardShot() {
           className="absolute -top-12 -left-20 hidden xl:flex"
           title="Order #46 paid"
           sub="WooCommerce · from Arbitrum"
-          amount="$28.00"
+          amount="$128.40"
           chain="arbitrum"
         />
         <Toast
           className="absolute top-[-24px] -right-20 hidden xl:flex"
           title="Invoice #4802461 paid"
           sub="Connor Wickham · from Solana"
-          amount="$7.00"
+          amount="$240.00"
           chain="solana"
         />
       </Reveal>
@@ -135,7 +134,7 @@ export function TwoCards() {
     <section className="mx-auto grid max-w-[1240px] gap-5 px-4 py-20 sm:px-6 lg:grid-cols-2">
       <Card
         id="invoices"
-        title="Bill any client, on any chain"
+        title="Bill Any Client, On Any Chain"
         body="Send an invoice with its lines and due date. Your client pays from the chain their money is on; the payment lands in the invoice's own account on NEAR and is booked to you."
       >
         <div className="relative flex w-full justify-center pt-12 xl:justify-start xl:pl-6">
@@ -144,7 +143,7 @@ export function TwoCards() {
             className="absolute top-0 right-0 hidden xl:flex"
             title="Paid in full"
             sub="from Solana · booked on NEAR"
-            amount="$7.00"
+            amount="$240.00"
             chain="solana"
           />
         </div>
@@ -152,7 +151,7 @@ export function TwoCards() {
       <Card
         id="checkout"
         delay={120}
-        title="Accept stablecoins at checkout"
+        title="Accept Stablecoins At Checkout"
         body="A hosted checkout for every order: USDC or USDT from eight chains, settled in the asset you choose. Ready for Shopify and WooCommerce."
       >
         <CoinCards />
@@ -187,7 +186,7 @@ export function Global() {
       <div className="grid items-center gap-10 overflow-hidden rounded-[28px] border border-border bg-surface p-7 sm:p-10 lg:grid-cols-[1fr_1.2fr]">
         <div>
           <p className="text-[14px] font-medium text-accent-text">Global by default</p>
-          <h2 className={`mt-3 break-words ${H2}`}>Sell everywhere. Get paid in one place.</h2>
+          <h2 className={`mt-3 break-words ${H2}`}>Sell Everywhere. Get Paid In One Place.</h2>
           <p className={`mt-5 max-w-[48ch] ${BODY}`}>
             A buyer in Lagos pays from Solana, one in Austin from Base, one in Seoul from NEAR. You
             set one settlement asset and receive it, whatever chain they used. Any store can do it
@@ -215,21 +214,21 @@ export function Global() {
             className="absolute top-0 left-0"
             title="Order paid"
             sub="Austin · from Base"
-            amount="$45.00"
+            amount="$128.40"
             chain="base"
           />
           <Toast
             className="absolute top-[34%] left-[30%]"
             title="Invoice paid"
             sub="Lagos · from Solana"
-            amount="$7.00"
+            amount="$240.00"
             chain="solana"
           />
           <Toast
             className="absolute top-[58%] right-0 hidden sm:flex"
             title="Order paid"
             sub="Seoul · from NEAR"
-            amount="$2.00"
+            amount="$96.00"
             chain="near"
           />
           <p className="tabular absolute inset-x-0 bottom-0 text-center text-[13px] text-muted">
@@ -255,19 +254,19 @@ export function Growth() {
   const cards = [
     {
       id: "invoices-b2b",
-      title: "Sell to businesses",
+      title: "Sell To Businesses",
       body: "Invoices with lines, due dates and a receipt per payment, each with its explorer links.",
       art: <FauxInvoice className="scale-[0.82]" />,
     },
     {
       id: "checkout-b2c",
-      title: "Sell to consumers",
+      title: "Sell To Consumers",
       body: "A prebuilt pay page that fits one screen: pick a token and a network, see the price, pay.",
       art: <FauxPay className="scale-[0.82]" />,
     },
     {
       id: "agents",
-      title: "Let agents sell for you",
+      title: "Let Agents Sell For You",
       body: "An MCP server: an AI agent issues invoices, opens checkouts and checks what was paid.",
       art: <FauxAgent className="scale-[0.82]" />,
     },
@@ -275,7 +274,7 @@ export function Growth() {
   return (
     <section className="mx-auto max-w-[1240px] px-4 py-24 sm:px-6">
       <p className="text-[14px] font-medium text-muted">Built for growth</p>
-      <h2 className={`mt-2 break-words ${H2}`}>Take your business on chain</h2>
+      <h2 className={`mt-2 break-words ${H2}`}>Take Your Business On Chain</h2>
       <p className={`mt-4 max-w-[56ch] ${BODY}`}>
         Three ways in, one account. Every one of them books the money on NEAR, where anyone can
         check it.
@@ -314,7 +313,7 @@ export function Band() {
             strokeWidth="2"
           />
         </svg>
-        <h2 className={`mx-auto max-w-[18ch] ${H2}`}>Stablecoin payments for growing businesses</h2>
+        <h2 className={`mx-auto max-w-[18ch] ${H2}`}>Stablecoin Payments For Growing Businesses</h2>
         <p className="mx-auto mt-5 max-w-[50ch] text-[18px] leading-7 font-normal text-white/85">
           Start with an invoice, add a store when you are ready. No card fees, no chargebacks, no
           custody: the money moves only as the contract allows.
@@ -341,14 +340,14 @@ export function Band() {
             className="absolute top-2 right-0 hidden text-text md:flex"
             title="Order #47 paid"
             sub="Shopify · from Polygon"
-            amount="$27.00"
+            amount="$112.00"
             chain="polygon"
           />
           <Toast
             className="absolute bottom-10 left-0 hidden text-text md:flex"
             title="Invoice paid"
             sub="from NEAR"
-            amount="$3.99"
+            amount="$74.50"
             chain="near"
           />
         </div>
@@ -370,7 +369,7 @@ export function OnChain() {
   return (
     <section className="py-24">
       <div className="mx-auto flex max-w-[1240px] flex-wrap items-end justify-between gap-4 px-4 sm:px-6">
-        <h2 className={`break-words ${H2}`}>What the chain says</h2>
+        <h2 className={`break-words ${H2}`}>What The Chain Says</h2>
         <Link
           href="/proof"
           className="inline-flex items-center gap-1.5 text-[15px] font-medium text-accent-text hover:underline"
@@ -465,7 +464,7 @@ export function LandingFooter() {
       <div className="mx-auto max-w-[1240px] overflow-hidden px-4 pt-6 pb-10 sm:px-6">
         <p
           aria-hidden
-          className="flex items-end justify-center leading-[0.8] font-extrabold tracking-[-0.04em] text-border [font-variant-caps:all-small-caps] text-[clamp(72px,19vw,260px)] select-none"
+          className="flex items-end justify-center leading-[0.8] font-extrabold tracking-[-0.04em] text-accent [font-variant-caps:all-small-caps] text-[clamp(72px,19vw,260px)] select-none"
         >
           openrail
           <span className="mb-[0.06em] ml-[0.04em] inline-block size-[0.14em] rounded-full bg-accent" />

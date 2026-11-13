@@ -24,7 +24,7 @@ export function Ring({ items }: { items: RingItem[] }) {
   const rot = useRef(0); // in items, continuous
   const target = useRef(0);
   const drag = useRef<{ x: number; start: number; v: number; t: number } | null>(null);
-  const touched = useRef(false);
+  const touchedAt = useRef(0);
   const [active, setActive] = useState(0);
   const [width, setWidth] = useState(640);
 
@@ -49,8 +49,12 @@ export function Ring({ items }: { items: RingItem[] }) {
       const el = stage.current;
       if (el !== null) {
         el.style.transform = `translateZ(${-radius}px) rotateY(${-rot.current * step}deg)`;
-        el.style.filter =
-          speed > 0.004 && !reduce ? `blur(${Math.min(6, speed * 60).toFixed(2)}px)` : "none";
+        // The blur goes on each card, never on this stage: a filter on a 3D stage flattens it, and the ring showed as
+        // one wide strip while it turned.
+        el.style.setProperty(
+          "--ring-blur",
+          speed > 0.004 && !reduce ? `blur(${Math.min(5, speed * 50).toFixed(2)}px)` : "none",
+        );
       }
       const idx = ((Math.round(rot.current) % n) + n) % n;
       setActive((a) => (a === idx ? a : idx));
@@ -60,7 +64,9 @@ export function Ring({ items }: { items: RingItem[] }) {
     const auto = reduce
       ? 0
       : window.setInterval(() => {
-          if (!touched.current && drag.current === null) target.current += 1;
+          // Turns on its own, and again 6 s after the visitor last touched it.
+          if (performance.now() - touchedAt.current > 6000 && drag.current === null)
+            target.current += 1;
         }, 4200);
     return () => {
       cancelAnimationFrame(raf);
@@ -69,7 +75,7 @@ export function Ring({ items }: { items: RingItem[] }) {
   }, [n, radius, step]);
 
   const go = useCallback((d: number) => {
-    touched.current = true;
+    touchedAt.current = performance.now();
     target.current = Math.round(target.current) + d;
   }, []);
 
@@ -88,7 +94,7 @@ export function Ring({ items }: { items: RingItem[] }) {
       <div
         className="relative mx-auto h-[min(62vw,460px)] cursor-grab touch-pan-y [perspective:1800px] active:cursor-grabbing"
         onPointerDown={(e) => {
-          touched.current = true;
+          touchedAt.current = performance.now();
           drag.current = { x: e.clientX, start: rot.current, v: 0, t: performance.now() };
           (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
         }}
@@ -127,6 +133,7 @@ export function Ring({ items }: { items: RingItem[] }) {
                 left: -width / 2,
                 top: -(width * 0.62) / 2,
                 transform: `rotateY(${i * step}deg) translateZ(${radius}px)`,
+                filter: "var(--ring-blur, none)",
               }}
             >
               {it.image ? (

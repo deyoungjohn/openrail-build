@@ -5,7 +5,6 @@
 import { CheckCircle2, ChevronDown, FileText, LayoutGrid, Lock, Plug, Wallet } from "lucide-react";
 import { ChainIcon, CHAINS, CoinIcon, type ChainId } from "@/components/ui/chain-badge";
 import { cn } from "@/lib/cn";
-import { PROOF_ROWS } from "@/lib/proof-data";
 import { CountUp } from "./count-up";
 
 const usd = (s: string) => `$${s}`;
@@ -41,11 +40,25 @@ export function Toast({
   );
 }
 
-/** The dashboard in a browser frame, with the real payments of the Proof page. */
+/**
+ * A sample month of a busy shop, drawn as the dashboard shows it (illustration: the real, smaller payments are on
+ * the Proof page and are never inflated there).
+ */
+const SAMPLE: {
+  type: "Checkout paid" | "Invoice payment booked";
+  amount_usd: string;
+  tx: string;
+}[] = [
+  { type: "Checkout paid", amount_usd: "128.40", tx: "4wFEBE6KaMvdXU1TwH8SmdC7NGDA3q5T" },
+  { type: "Invoice payment booked", amount_usd: "96.00", tx: "5bLrANGUiNQjPzRVscgTrfxRUV9bofifo" },
+  { type: "Checkout paid", amount_usd: "74.50", tx: "Eo1rLiwGmD6o4ufiLAPTHbF6vLhCvszX" },
+  { type: "Checkout paid", amount_usd: "112.00", tx: "1U5V144RTPyF8aATsAgzHAbg8YeZx23Y" },
+  { type: "Invoice payment booked", amount_usd: "49.40", tx: "Fwdo6CjVKRdEP5XNr3FpiRBFuf3QERU1" },
+];
+
+/** The dashboard in a browser frame. */
 export function FauxDashboard() {
-  const paid = PROOF_ROWS.filter(
-    (r) => r.type === "Checkout paid" || r.type === "Invoice payment booked",
-  );
+  const paid = SAMPLE;
   const total = paid.reduce((n, r) => n + Math.round(Number(r.amount_usd) * 100), 0);
   const bars = [18, 42, 26, 64, 38, 88, 56];
   const slices: [ChainId, number][] = [
@@ -116,7 +129,7 @@ export function FauxDashboard() {
             <div className="rounded-xl border border-border bg-surface p-3">
               <p className="text-[11.5px] text-muted">Payments</p>
               <p className="text-[26px] leading-8 font-bold">
-                <CountUp to={paid.length} />
+                <CountUp to={17} />
               </p>
               <p className="text-[11px] text-muted">invoices and checkouts</p>
             </div>
@@ -191,16 +204,16 @@ export function FauxInvoice({ className }: { className?: string }) {
   return (
     <div className={cn("w-[300px] rounded-2xl border border-border bg-surface p-4", className)}>
       <p className="text-[11.5px] text-muted">Invoice #4802461</p>
-      <p className="tabular mt-1 text-[28px] leading-8 font-bold">$7.00</p>
+      <p className="tabular mt-1 text-[28px] leading-8 font-bold">$240.00</p>
       <p className="text-[11.5px] text-muted">Due Nov 20, 2026 · Belmonte Apparels</p>
       <div className="mt-3 space-y-1.5 border-t border-border pt-3 text-[12.5px]">
         <p className="flex justify-between">
-          <span>Linen shirt × 2</span>
-          <span className="tabular">$5.00</span>
+          <span>Linen shirt × 4</span>
+          <span className="tabular">$180.00</span>
         </p>
         <p className="flex justify-between">
           <span>Delivery</span>
-          <span className="tabular">$2.00</span>
+          <span className="tabular">$60.00</span>
         </p>
       </div>
       <p className="mt-3 text-[11.5px] text-muted">Pay from</p>

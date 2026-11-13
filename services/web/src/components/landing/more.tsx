@@ -6,7 +6,7 @@ import { ChainIcon, CHAINS, CoinIcon, type ChainId } from "@/components/ui/chain
 import { Reveal } from "./reveal";
 import { Ring, type RingItem } from "./ring";
 
-const H2 = "text-[clamp(28px,4vw,44px)] leading-[1.05] font-extrabold uppercase tracking-[-0.03em]";
+const H2 = "text-[clamp(28px,4vw,44px)] leading-[1.05] font-extrabold tracking-[-0.03em]";
 const BODY = "text-[15px] leading-6 font-normal text-muted";
 
 /** Ten marks: the eight chains clients pay from and the two stablecoins. */
@@ -35,7 +35,7 @@ export function ChainsMarquee() {
         Clients pay from the chain their money is on
       </p>
       <div className="mt-8 overflow-hidden [mask-image:linear-gradient(90deg,transparent,black_10%,black_90%,transparent)]">
-        <ul className="flex w-max gap-14 motion-safe:animate-[landing-marquee-right_40s_linear_infinite]">
+        <ul className="flex w-max gap-14 motion-safe:animate-[landing-marquee-left_40s_linear_infinite]">
           {loop.map((m, i) => (
             <li
               key={`${m.key}-${i}`}
@@ -140,7 +140,7 @@ export function Showcase() {
     <section className="mx-auto max-w-[1240px] px-4 py-24 sm:px-6">
       <Reveal>
         <p className="text-center text-[14px] font-medium text-muted">Inside the app</p>
-        <h2 className={`mt-2 text-center ${H2}`}>Everything after the payment</h2>
+        <h2 className={`mt-2 text-center ${H2}`}>Everything After The Payment</h2>
       </Reveal>
       <Reveal delay={120} className="mt-12">
         <Ring items={SCREENS} />
@@ -152,7 +152,7 @@ export function Showcase() {
 const FEATURES = [
   {
     icon: BarChart3,
-    title: "Dashboards and analytics",
+    title: "Dashboards And Analytics",
     body: "Revenue, activity, top clients and chains, from the payments booked on chain.",
   },
   {
@@ -167,17 +167,17 @@ const FEATURES = [
   },
   {
     icon: Lock,
-    title: "Private payouts",
+    title: "Private Payouts",
     body: "Move payments to a private balance on NEAR Intents and withdraw to any chain.",
   },
   {
     icon: Code2,
-    title: "API and webhooks",
+    title: "API And Webhooks",
     body: "OpenAPI, API keys and signed webhooks for every invoice and checkout event.",
   },
   {
     icon: Store,
-    title: "Store integrations",
+    title: "Store Integrations",
     body: "A Shopify app and a WooCommerce plugin; any other store with one API call.",
   },
 ];
@@ -187,7 +187,7 @@ export function Features() {
   return (
     <section className="mx-auto max-w-[1240px] px-4 sm:px-6">
       <Reveal>
-        <h2 className={H2}>Built for the whole money flow</h2>
+        <h2 className={H2}>Built For The Whole Money Flow</h2>
         <p className={`mt-4 max-w-[60ch] ${BODY}`}>
           Getting paid is the start. Openrail keeps the books, proves them, and moves the money
           where you want it.
@@ -246,7 +246,7 @@ export function Faq() {
     <section className="mx-auto grid max-w-[1240px] gap-10 px-4 py-24 sm:px-6 lg:grid-cols-[1fr_1.4fr]">
       <Reveal>
         <p className="text-[14px] font-medium text-muted">Questions</p>
-        <h2 className={`mt-2 ${H2}`}>Asked often</h2>
+        <h2 className={`mt-2 ${H2}`}>Frequently Asked Questions</h2>
         <p className={`mt-4 max-w-[40ch] ${BODY}`}>
           Something else? The code and the docs are open on GitHub.
         </p>
