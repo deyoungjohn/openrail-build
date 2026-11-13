@@ -39,6 +39,13 @@ interface EvmState {
   }) => Promise<Hex>;
 }
 
+declare global {
+  interface Window {
+    /** The browser's injected EVM wallet (EIP-1193), when there is one. */
+    ethereum?: EIP1193Provider;
+  }
+}
+
 const Ctx = createContext<EvmState | null>(null);
 
 export function useEvm() {

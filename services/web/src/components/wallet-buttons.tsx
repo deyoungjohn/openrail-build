@@ -94,7 +94,7 @@ export function WalletConnectView({ wallet, chosen }: { wallet: PayWallet; chose
       <div className="flex flex-wrap items-center gap-2">
         <AddressChip
           value={wallet.address}
-          chain={wallet.kind === "solana" ? "solana" : "ethereum"}
+          chain={wallet.kind === "solana" ? "solana" : wallet.kind === "near" ? "near" : "ethereum"}
         />
         <Button variant="secondary" size="sm" onClick={wallet.disconnect}>
           {t.disconnect}
@@ -104,7 +104,11 @@ export function WalletConnectView({ wallet, chosen }: { wallet: PayWallet; chose
   return (
     <div className="flex flex-col items-start gap-1">
       <Button size="sm" onClick={wallet.connect}>
-        {wallet.kind === "solana" ? t.connectSolana : t.connectEvm}
+        {wallet.kind === "solana"
+          ? t.connectSolana
+          : wallet.kind === "near"
+            ? t.connectNear
+            : t.connectEvm}
       </Button>
       {wallet.error ? <p className="text-danger text-[13px]">{t.evmFailed}</p> : null}
     </div>

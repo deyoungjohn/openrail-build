@@ -2,8 +2,10 @@
 
 import type { Route } from "@openrail/api-client";
 import type { Address } from "viem";
-import { useConnector } from "./connector-context";
 import { useEvm } from "./evm";
+import { useNear } from "./near";
+import { nearTokenPayment } from "./near-pay";
+import { useSolana } from "./solana";
 import { walletKindOf, type PayWalletKind } from "./wallet-kind";
 
 export interface PayWallet {
@@ -13,68 +15,75 @@ export interface PayWallet {
   /** A way to connect a wallet exists for this route. */
   available: boolean;
   error: boolean;
-  /** Opens the wallet dialog for the route's chain family. */
+  /** Connects the wallet of the route's chain family. */
   connect: () => void;
   disconnect: () => void;
   /** Sends `amount` (the origin asset's base units) to `to` from the connected wallet; returns the hash. */
   pay: (to: string, amount: bigint) => Promise<string>;
 }
 
+const NONE: PayWallet = {
+  kind: null,
+  address: null,
+  available: false,
+  error: false,
+  connect: () => undefined,
+  disconnect: () => undefined,
+  pay: async () => {
+    throw new Error("wallet_not_available");
+  },
+};
+
 /**
- * The wallet to pay a route from. With a WalletConnect project id it is the connector, which connects the chain family
- * the person picked (Solana for a Solana route, never an EVM address that was cached for another one). Without it the
- * browser's own EVM wallet is used, for EVM routes only.
+ * The wallet to pay a route from, the browser's own for each family: an injected EVM wallet, an injected Solana
+ * wallet, or the NEAR wallet the site connects. No WalletConnect: it made the pay page heavy and slow (13 Nov).
  */
 export function usePayWallet(route: Route | null): PayWallet {
-  const connector = useConnector();
   const evm = useEvm();
+  const sol = useSolana();
+  const near = useNear();
   const kind = walletKindOf(route);
+  if (route === null || kind === null) return NONE;
 
-  if (route === null || kind === null) {
-    return {
-      kind: null,
-      address: null,
-      available: false,
-      error: false,
-      connect: () => undefined,
-      disconnect: () => undefined,
-      pay: async () => {
-        throw new Error("wallet_not_available");
-      },
-    };
-  }
-
-  if (connector.enabled) {
-    const ns = kind === "solana" ? "solana" : "eip155";
+  if (kind === "near")
     return {
       kind,
-      address: kind === "solana" ? connector.solAddress : connector.evmAddress,
-      available: true,
-      error: false,
-      connect: () => connector.open(ns),
-      disconnect: () => void connector.disconnect(ns),
-      pay: (to, amount) =>
-        kind === "solana"
-          ? connector.paySolana({
-              to,
-              mint: route.origin_contract as string,
-              amount,
-              decimals: route.origin_decimals,
-            })
-          : connector.payEvm({
-              chainId: route.evm_chain_id as number,
-              to: to as Address,
-              amount,
-              token: route.origin_contract === null ? null : (route.origin_contract as Address),
-            }),
+      address: near.accountId,
+      available: near.ready,
+      error: near.error,
+      connect: () => near.signIn(),
+      disconnect: () => void near.signOut(),
+      pay: async (to, amount) => {
+        const hash = await near.callBatch(
+          route.origin_contract as string,
+          nearTokenPayment(to, amount, route.origin_contract as string, near.accountId ?? ""),
+        );
+        if (hash === undefined) throw new Error("wallet_no_hash");
+        return hash;
+      },
     };
-  }
 
-  // No connector: the browser's own wallet, EVM only.
+  if (kind === "solana")
+    return {
+      kind,
+      address: sol.address,
+      available: sol.available,
+      error: sol.error,
+      connect: () => void sol.connect(),
+      disconnect: sol.disconnect,
+      pay: (to, amount) =>
+        sol.pay({
+          to,
+          mint: route.origin_contract as string,
+          amount,
+          decimals: route.origin_decimals,
+        }),
+    };
+
   return {
     kind,
-    address: kind === "evm" ? evm.address : null,
-    available: kind === "evm" && evm.available,
+    address: evm.address,
+    available: evm.available,
     error: evm.error,
     connect: () => void evm.connect(),
     disconnect: evm.disconnect,

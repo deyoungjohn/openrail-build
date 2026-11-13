@@ -528,7 +528,13 @@ export function createCashoutPort(
 }
 
 const USDC_NEAR = "nep141:17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1";
+/**
+ * Where a withdrawal from the private balance (or a payout estimate) can go: USDC on each chain, as the provider lists
+ * it (checked against `/v0/tokens` on 13 Nov; "ethereum" pointed at NEAR's USDC before). NEAR first. The address is a
+ * placeholder used only for estimates.
+ */
 const PAYOUT_DESTINATIONS: Record<string, { asset: string; address: string }> = {
+  near: { asset: USDC_NEAR, address: "openrail.near" },
   base: {
     asset: "nep141:base-0x833589fcd6edb6e08f4c7c32d4f71b54bda02913.omft.near",
     address: "0x1111222233334444555566667777888899990000",
@@ -538,7 +544,19 @@ const PAYOUT_DESTINATIONS: Record<string, { asset: string; address: string }> = 
     address: "0x1111222233334444555566667777888899990000",
   },
   ethereum: {
-    asset: "nep141:17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1",
+    asset: "nep141:eth-0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.omft.near",
+    address: "0x1111222233334444555566667777888899990000",
+  },
+  optimism: {
+    asset: "nep245:v2_1.omni.hot.tg:10_A2ewyUyDp6qsue1jqZsGypkCxRJ",
+    address: "0x1111222233334444555566667777888899990000",
+  },
+  polygon: {
+    asset: "nep141:pol-0x3c499c542cef5e3811e1192ce70d8cc03d5c3359.omdep.near",
+    address: "0x1111222233334444555566667777888899990000",
+  },
+  bnb: {
+    asset: "nep141:bnb-0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d.omdep.near",
     address: "0x1111222233334444555566667777888899990000",
   },
   solana: {

@@ -39,6 +39,7 @@ export const copy = {
       "This asset cannot be sent from a connected wallet here. Copy the address and send it from your own wallet.",
     connectEvm: "Connect an EVM wallet",
     connectSolana: "Connect a Solana wallet",
+    connectNear: "Connect a NEAR wallet",
     near: "NEAR wallet",
     evm: "Browser wallet",
     signIn: "Sign in",

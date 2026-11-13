@@ -27,10 +27,15 @@ export function destinationTxs(v: unknown, chain: string): { hash: string; url: 
   });
 }
 
+// Every chain the provider can pay USDC out on (API `PAYOUT_DESTINATIONS`), NEAR first and the default.
 const CHAINS: { id: string; label: string; chain: ChainId }[] = [
+  { id: "near", label: "NEAR", chain: "near" },
   { id: "base", label: "Base", chain: "base" },
   { id: "arbitrum", label: "Arbitrum", chain: "arbitrum" },
   { id: "ethereum", label: "Ethereum", chain: "ethereum" },
+  { id: "optimism", label: "Optimism", chain: "optimism" },
+  { id: "polygon", label: "Polygon", chain: "polygon" },
+  { id: "bnb", label: "BNB Chain", chain: "bnb" },
   { id: "solana", label: "Solana", chain: "solana" },
 ];
 
@@ -76,7 +81,7 @@ function problemText(code: string | undefined): string {
 /** Withdraw from the private balance to a wallet: quote, sign the one message in your wallet, follow it to the end. */
 export function WithdrawCard({ approxUnits }: { approxUnits: bigint }) {
   const near = useNear();
-  const [chain, setChain] = useState("base");
+  const [chain, setChain] = useState("near");
   const [address, setAddress] = useState("");
   const [amount, setAmount] = useState("");
   const [step, setStep] = useState<Step>("form");

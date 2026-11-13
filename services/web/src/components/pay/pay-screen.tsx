@@ -38,7 +38,6 @@ import { formatUsd } from "@/lib/format";
 import { usePayWallet } from "@/wallet/pay-wallet";
 import { AddressChip } from "../ui/address-chip";
 import { Button } from "../ui/button";
-import dynamic from "next/dynamic";
 import { PageSkeleton } from "../ui/page-skeleton";
 import { Card } from "../ui/card";
 import { CHAINS, PairIcon, WithIcon } from "../ui/chain-badge";
@@ -141,7 +140,7 @@ function useNow(intervalMs = 1000): number | null {
 const amountOf = (session: Session, route: Route): string => {
   const units = payUnits(session.amount_in, route.origin_decimals, route.payer_asset);
   // ETH and SOL keep the digits a wallet needs; everything else shows two decimals (rounded up by payUnits).
-  return route.payer_asset === "ETH" || route.payer_asset === "SOL"
+  return route.payer_asset === "ETH" || route.payer_asset === "SOL" || route.payer_asset === "NEAR"
     ? formatCoinAmount(units, route.origin_decimals)
     : formatToken(units, route.origin_decimals, "up");
 };
@@ -179,7 +178,8 @@ function QuoteNote({
   const chainName = chain ? CHAINS[chain] : route.origin_chain;
   const upto = amountPrefix(route) === "upto";
   // Price protection is for coins that move in price (ETH, SOL); a stablecoin swap has no such margin to explain.
-  const volatile = route.payer_asset === "ETH" || route.payer_asset === "SOL";
+  const volatile =
+    route.payer_asset === "ETH" || route.payer_asset === "SOL" || route.payer_asset === "NEAR";
   return (
     <section
       aria-label={partLabel ? `${p.quoteTitle}, ${partLabel}` : p.quoteTitle}
@@ -479,23 +479,12 @@ interface Leg {
 
 type Mode = "paste" | "wallet" | "split";
 
-// The wallet connector (WalletConnect, wagmi, Solana) is heavy: it loads here, on the pay pages only, and not in every
-// page of the app (it kept the whole site busy, and the dashboard stuttered while it started).
-const ConnectorProvider = dynamic(
-  () => import("@/wallet/connector").then((m) => m.ConnectorProvider),
-  {
-    ssr: false,
-  },
-);
-
 export function PayScreen({ tokenId, source }: { tokenId: string; source?: PayScreenSource }) {
   const flow = source ?? invoiceSource;
   const words = useMemo<PayWords>(() => ({ ...copy.pay, ...(flow.words ?? {}) }), [flow]);
   return (
     <PayWordsContext.Provider value={words}>
-      <ConnectorProvider>
-        <PayFlow tokenId={tokenId} source={flow} />
-      </ConnectorProvider>
+      <PayFlow tokenId={tokenId} source={flow} />
     </PayWordsContext.Provider>
   );
 }

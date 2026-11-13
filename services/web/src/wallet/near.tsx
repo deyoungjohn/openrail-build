@@ -49,6 +49,11 @@ interface NearState {
   signOut: () => Promise<void>;
   /** One FunctionCall transaction, signed by the connected NEAR wallet. */
   call: (c: NearCall) => Promise<string | undefined>;
+  /** Several function calls to one contract in one transaction (one approval in the wallet). */
+  callBatch: (
+    receiverId: string,
+    calls: Omit<NearCall, "receiverId">[],
+  ) => Promise<string | undefined>;
   /** NEP-413 signature of the sign-in challenge. Throws `SIGNMESSAGE_UNSUPPORTED` for wallets without it. */
   signMessage: (c: ChallengeToSign, signal?: AbortSignal) => Promise<SignedChallenge>;
   /** Asks the selector which wallets support signMessage. Safe to call again. */
@@ -170,6 +175,23 @@ export function NearProvider({ children }: { children: ReactNode }) {
     await wallet.signOut();
   }, []);
 
+  const callBatch = useCallback(
+    async (receiverId: string, calls: Omit<NearCall, "receiverId">[]) => {
+      const s = selector.current;
+      if (!s?.isSignedIn()) throw new Error("NOT_SIGNED_IN");
+      const wallet = await s.wallet();
+      const outcome = (await wallet.signAndSendTransaction({
+        receiverId,
+        actions: calls.map((c) =>
+          actionCreators.functionCall(c.methodName, c.args, BigInt(c.gas), BigInt(c.deposit)),
+        ),
+      })) as { transaction?: { hash?: string }; transaction_outcome?: { id?: string } } | void;
+      const hash = outcome?.transaction?.hash ?? outcome?.transaction_outcome?.id;
+      return typeof hash === "string" ? hash : undefined;
+    },
+    [],
+  );
+
   const call = useCallback(async (c: NearCall) => {
     const s = selector.current;
     if (!s?.isSignedIn()) throw new Error("NOT_SIGNED_IN");
@@ -227,6 +249,7 @@ export function NearProvider({ children }: { children: ReactNode }) {
       connect,
       signOut,
       call,
+      callBatch,
       signMessage,
       probeWallets,
     }),
@@ -241,6 +264,7 @@ export function NearProvider({ children }: { children: ReactNode }) {
       connect,
       signOut,
       call,
+      callBatch,
       signMessage,
       probeWallets,
     ],
