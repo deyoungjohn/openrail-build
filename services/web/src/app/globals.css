@@ -433,3 +433,13 @@ dialog.overlay::backdrop {
   75% { opacity: 1; }
   100% { opacity: 0; transform: translate(-50%, -46px); }
 }
+
+/* Landing page: the chains and coins slide left to right (the list is three copies; one third is one loop). */
+@keyframes landing-marquee-right {
+  from {
+    transform: translateX(-33.3333%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}

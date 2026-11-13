@@ -8,8 +8,13 @@ interface Scene {
   setColors(c: Record<string, string>): void;
 }
 
-/** Colours from the page's own tokens, so the globe follows light and dark. */
+/**
+ * Colours from the page's own tokens. In dark mode the globe is the reference one: off-white land, faint grey sea and
+ * ring, mint arcs and blinks, on near-black.
+ */
 function colors(): Record<string, string> {
+  if (document.documentElement.dataset.theme === "dark")
+    return { ink: "#EDEBE6", dim: "#2F2F35", accent: "#86D99B", mint: "#86D99B", bg: "#0A0A0B" };
   const css = getComputedStyle(document.documentElement);
   const v = (name: string, fallback: string) => css.getPropertyValue(name).trim() || fallback;
   return {

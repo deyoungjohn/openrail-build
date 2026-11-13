@@ -1,26 +1,13 @@
 import { ArrowRight, ArrowUpRight, ExternalLink, ShieldCheck } from "lucide-react";
 import Link from "next/link";
-import { BrandMark } from "@/components/brand";
-import { ChainIcon, CHAINS, type ChainId } from "@/components/ui/chain-badge";
+import { Brand, BrandMark } from "@/components/brand";
 import { nearAccountUrl, nearTxUrl, PROOF_CONTRACT, PROOF_ROWS } from "@/lib/proof-data";
 import { CoinCards, FauxAgent, FauxDashboard, FauxInvoice, FauxPay, Toast } from "./faux";
 import { Globe } from "./globe/globe";
 import { MENUS, REPO_URL } from "./links";
+import { CountUp } from "./count-up";
 import { Reveal } from "./reveal";
 
-const PAY_CHAINS: ChainId[] = [
-  "near",
-  "base",
-  "arbitrum",
-  "ethereum",
-  "solana",
-  "polygon",
-  "optimism",
-  "bnb",
-];
-
-/** DESIGN.md type scale. Display: the hero, 800, upper case, tracking -0.04em. */
-const DISPLAY = "font-extrabold uppercase tracking-[-0.04em] leading-[0.95]";
 /** H2 (landing section): clamp(28px, 4vw, 44px) / 1.05, 800, upper case, tracking -0.03em. */
 const H2 = "text-[clamp(28px,4vw,44px)] leading-[1.05] font-extrabold uppercase tracking-[-0.03em]";
 /** Card titles on the landing page: the H2 face, one step down. */
@@ -30,8 +17,6 @@ const H2_CARD =
 const BODY_L = "text-[18px] leading-7 font-normal text-muted";
 /** Body: 15 / 24, 400. */
 const BODY = "text-[15px] leading-6 font-normal text-muted";
-/** Caption: 13 / 18, 300. */
-const CAPTION = "text-[13px] leading-[18px] font-light text-muted";
 
 export function Hero() {
   return (
@@ -42,7 +27,7 @@ export function Hero() {
         className="absolute inset-0 -z-10 [background-image:linear-gradient(var(--border)_1px,transparent_1px),linear-gradient(90deg,var(--border)_1px,transparent_1px)] [background-size:56px_56px] opacity-40 [mask-image:radial-gradient(ellipse_at_30%_20%,black,transparent_70%)]"
       />
       <div className="mx-auto max-w-[1240px] px-4 pt-10 sm:px-6 sm:pt-14">
-        <div className="grid items-center gap-8 lg:grid-cols-[1.15fr_1fr]">
+        <div className="grid items-center gap-8 lg:grid-cols-[1fr_1.1fr]">
           <div>
             <Reveal>
               <p className="inline-flex items-center gap-2 rounded-full border border-border bg-surface p-1 pr-3 text-[13px] font-medium">
@@ -53,8 +38,8 @@ export function Hero() {
               </p>
             </Reveal>
             <Reveal delay={80}>
-              <h1 className={`mt-6 text-[clamp(44px,7vw,96px)] text-text ${DISPLAY}`}>
-                Get paid in stablecoins. <span className="block text-accent">From any chain.</span>
+              <h1 className="mt-6 text-[clamp(38px,4.6vw,64px)] leading-[1.02] font-bold tracking-[-0.03em] text-text">
+                Get Paid In Stablecoins. <span className="block text-accent">From Any Chain.</span>
               </h1>
             </Reveal>
             <Reveal delay={160}>
@@ -83,44 +68,36 @@ export function Hero() {
               </div>
             </Reveal>
           </div>
-          <Reveal delay={120} className="mx-auto w-full max-w-[560px]">
+          <Reveal delay={120} className="mx-auto w-full max-w-[680px] lg:-mr-10">
             <Globe />
           </Reveal>
         </div>
-        <Reveal delay={100} className="relative mx-auto mt-12 max-w-[1080px]">
-          <FauxDashboard />
-          <Toast
-            className="absolute -top-12 -left-20 hidden xl:flex"
-            title="Order #46 paid"
-            sub="WooCommerce · from Arbitrum"
-            amount="$28.00"
-            chain="arbitrum"
-          />
-          <Toast
-            className="absolute top-[-24px] -right-20 hidden xl:flex"
-            title="Invoice #4802461 paid"
-            sub="Connor Wickham · from Solana"
-            amount="$7.00"
-            chain="solana"
-          />
-        </Reveal>
       </div>
     </section>
   );
 }
 
-/** The chains clients pay from, as the reference's row of logos. */
-export function ChainsRow() {
+/** The dashboard in a browser frame: a section of its own, with room above and below. */
+export function DashboardShot() {
   return (
-    <section aria-label="Chains clients pay from" className="border-y border-border bg-surface">
-      <div className="mx-auto flex max-w-[1240px] flex-wrap items-center gap-x-10 gap-y-4 px-4 py-7 sm:px-6">
-        <p className={`w-[180px] ${CAPTION}`}>Clients pay from the chain their money is on</p>
-        {PAY_CHAINS.map((c) => (
-          <span key={c} className="flex items-center gap-2 text-[15px] font-medium">
-            <ChainIcon chain={c} size={26} /> {CHAINS[c]}
-          </span>
-        ))}
-      </div>
+    <section aria-label="The Openrail dashboard" className="px-4 pt-24 pb-28 sm:px-6">
+      <Reveal className="relative mx-auto max-w-[1080px]">
+        <FauxDashboard />
+        <Toast
+          className="absolute -top-12 -left-20 hidden xl:flex"
+          title="Order #46 paid"
+          sub="WooCommerce · from Arbitrum"
+          amount="$28.00"
+          chain="arbitrum"
+        />
+        <Toast
+          className="absolute top-[-24px] -right-20 hidden xl:flex"
+          title="Invoice #4802461 paid"
+          sub="Connor Wickham · from Solana"
+          amount="$7.00"
+          chain="solana"
+        />
+      </Reveal>
     </section>
   );
 }
@@ -256,9 +233,15 @@ export function Global() {
             chain="near"
           />
           <p className="tabular absolute inset-x-0 bottom-0 text-center text-[13px] text-muted">
-            <span className="text-[36px] leading-[1.1] font-bold tracking-tight text-text">8</span>{" "}
+            <CountUp
+              to={8}
+              className="text-[56px] leading-none font-bold tracking-tight text-text"
+            />{" "}
             chains ·{" "}
-            <span className="text-[36px] leading-[1.1] font-bold tracking-tight text-text">19</span>{" "}
+            <CountUp
+              to={19}
+              className="text-[56px] leading-none font-bold tracking-tight text-text"
+            />{" "}
             payment routes
           </p>
         </div>
@@ -402,9 +385,9 @@ export function OnChain() {
               key={`${r.tx}-${i}`}
               className="w-[330px] shrink-0 rounded-[22px] border border-border bg-surface p-5"
             >
-              <p className="text-[15px] leading-6">
-                “{r.type} for <span className="font-semibold">${r.amount_usd}</span>, booked by the
-                contract on {when(r.time)}.”
+              <p className="tabular text-[36px] leading-[1.1] font-bold">${r.amount_usd}</p>
+              <p className="mt-2 text-[15px] leading-6 text-muted">
+                “{r.type}, booked by the contract on {when(r.time)}.”
               </p>
               <div className="mt-5 flex items-center gap-3">
                 <BrandMark className="size-9" />
@@ -433,7 +416,7 @@ export function LandingFooter() {
     <footer className="border-t border-border">
       <div className="mx-auto grid max-w-[1240px] gap-10 px-4 py-14 sm:px-6 md:grid-cols-[1.4fr_repeat(4,1fr)]">
         <div>
-          <BrandMark className="size-10" />
+          <Brand className="h-8 w-auto" />
           <p className="mt-4 max-w-[30ch] text-[14px] leading-6 text-muted">
             Stablecoin invoices and checkout, booked on NEAR.
           </p>
@@ -482,7 +465,7 @@ export function LandingFooter() {
       <div className="mx-auto max-w-[1240px] overflow-hidden px-4 pt-6 pb-10 sm:px-6">
         <p
           aria-hidden
-          className="flex items-end leading-[0.8] font-extrabold tracking-[-0.04em] text-border [font-variant-caps:all-small-caps] text-[clamp(72px,19vw,260px)] select-none"
+          className="flex items-end justify-center leading-[0.8] font-extrabold tracking-[-0.04em] text-border [font-variant-caps:all-small-caps] text-[clamp(72px,19vw,260px)] select-none"
         >
           openrail
           <span className="mb-[0.06em] ml-[0.04em] inline-block size-[0.14em] rounded-full bg-accent" />

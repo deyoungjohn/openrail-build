@@ -6,6 +6,7 @@ import { CheckCircle2, ChevronDown, FileText, LayoutGrid, Lock, Plug, Wallet } f
 import { ChainIcon, CHAINS, CoinIcon, type ChainId } from "@/components/ui/chain-badge";
 import { cn } from "@/lib/cn";
 import { PROOF_ROWS } from "@/lib/proof-data";
+import { CountUp } from "./count-up";
 
 const usd = (s: string) => `$${s}`;
 
@@ -95,7 +96,9 @@ export function FauxDashboard() {
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
             <div className="rounded-xl border border-border bg-surface p-3">
               <p className="text-[11.5px] text-muted">Revenue this month</p>
-              <p className="tabular text-[20px] font-bold">${(total / 100).toFixed(2)}</p>
+              <p className="text-[26px] leading-8 font-bold">
+                <CountUp to={total / 100} decimals={2} prefix="$" />
+              </p>
               <p className="text-[11px] text-success-text">+ every payment proven on NEAR</p>
             </div>
             <div className="rounded-xl border border-border bg-surface p-3">
@@ -112,7 +115,9 @@ export function FauxDashboard() {
             </div>
             <div className="rounded-xl border border-border bg-surface p-3">
               <p className="text-[11.5px] text-muted">Payments</p>
-              <p className="tabular text-[20px] font-bold">{paid.length}</p>
+              <p className="text-[26px] leading-8 font-bold">
+                <CountUp to={paid.length} />
+              </p>
               <p className="text-[11px] text-muted">invoices and checkouts</p>
             </div>
             <div className="flex items-center gap-3 rounded-xl border border-border bg-surface p-3">

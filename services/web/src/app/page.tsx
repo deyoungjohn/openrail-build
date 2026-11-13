@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
+import { ChainsMarquee, Faq, Features, Showcase } from "@/components/landing/more";
 import { LandingNav } from "@/components/landing/nav";
 import { Reveal } from "@/components/landing/reveal";
 import {
   Band,
-  ChainsRow,
+  DashboardShot,
   Global,
   Growth,
   Hero,
@@ -24,20 +25,24 @@ export default function Landing() {
       <LandingNav />
       <main>
         <Hero />
+        <DashboardShot />
         <Reveal>
-          <ChainsRow />
+          <ChainsMarquee />
         </Reveal>
         <TwoCards />
         <Reveal>
           <Global />
         </Reveal>
         <Growth />
+        <Features />
+        <Showcase />
         <Reveal>
           <Band />
         </Reveal>
         <Reveal>
           <OnChain />
         </Reveal>
+        <Faq />
       </main>
       <LandingFooter />
     </div>

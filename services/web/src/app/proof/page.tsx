@@ -1,5 +1,6 @@
 import { ExternalLink } from "lucide-react";
 import type { Metadata } from "next";
+import { CountUp } from "@/components/landing/count-up";
 import { LandingNav } from "@/components/landing/nav";
 import { LandingFooter } from "@/components/landing/sections";
 import { nearAccountUrl, nearTxUrl, PROOF_CONTRACT, PROOF_ROWS } from "@/lib/proof-data";
@@ -45,14 +46,18 @@ export default function ProofPage() {
           for programs and AI agents.
         </p>
         <dl className="mt-8 grid max-w-[640px] grid-cols-3 gap-3">
-          {[
-            ["Transactions", String(PROOF_ROWS.length)],
-            ["Payments booked", String(paid.length)],
-            ["Paid in", `$${(total / 100).toFixed(2)}`],
-          ].map(([k, v]) => (
+          {(
+            [
+              ["Transactions", PROOF_ROWS.length, 0, ""],
+              ["Payments booked", paid.length, 0, ""],
+              ["Paid in", total / 100, 2, "$"],
+            ] as const
+          ).map(([k, v, d, pre]) => (
             <div key={k} className="rounded-2xl border border-border bg-surface p-4">
               <dt className="text-[13px] text-muted">{k}</dt>
-              <dd className="tabular mt-1 text-[24px] font-bold">{v}</dd>
+              <dd className="mt-1 text-[40px] leading-[1.1] font-bold">
+                <CountUp to={v} decimals={d} prefix={pre} />
+              </dd>
             </div>
           ))}
         </dl>
