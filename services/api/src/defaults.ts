@@ -369,10 +369,19 @@ export function createHttpIssuer(baseUrl: string): IssuerPort {
 export function providerFailure(error: unknown): never {
   if (error instanceof OneClickRequestError) {
     const rejected = error.status >= 400 && error.status < 500;
+    // The provider's own reason ("Amount is too low…"), not its raw JSON, so the pay page can show it to the payer.
+    const raw = error.message.replace(/^ONECLICK_HTTP_\d+:\s*/, "");
+    let reason = raw;
+    try {
+      const parsed = JSON.parse(raw) as { message?: unknown };
+      if (typeof parsed.message === "string" && parsed.message !== "") reason = parsed.message;
+    } catch {
+      // not JSON: keep the text
+    }
     throw new ApiError(
       rejected ? 422 : 502,
       rejected ? "provider_rejected" : "provider_unavailable",
-      error.message.slice(0, 300),
+      reason.slice(0, 300),
     );
   }
   throw error;
