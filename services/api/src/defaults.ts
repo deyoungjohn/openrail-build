@@ -123,6 +123,10 @@ export function createAccessKeyPort(
         }
       } catch (error) {
         const name = (error as { causeName?: string }).causeName;
+        // An unfunded implicit account is not on chain, and the RPC says so on the key lookup itself: its own key
+        // (the account id is that key in hex) is the right signer. This refused OKX, Trust and other multi-chain
+        // wallets, whose NEAR account is a fresh implicit one (14 Nov).
+        if (name === "UNKNOWN_ACCOUNT" && implicitKeyMatches(accountId, publicKey)) return true;
         if (isDefinite(name)) return false;
         log(`access key check unavailable: ${(error as Error).message}`);
         throw new ApiError(503, "chain_unavailable", "could not check the account key on chain");
