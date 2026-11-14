@@ -25,6 +25,7 @@
     "@near-wallet-selector/meteor-wallet": "10.1.4",
     "@near-wallet-selector/near-mobile-wallet": "10.1.4",
     "@near-wallet-selector/nightly": "10.1.4",
+    "@near-wallet-selector/okx-wallet": "10.1.4",
     "@near-wallet-selector/wallet-connect": "10.1.4",
     "@openrail/api-client": "workspace:*",
     "@solana/spl-token": "^0.4.15",

@@ -341,6 +341,9 @@ importers:
       '@near-wallet-selector/nightly':
         specifier: 10.1.4
         version: 10.1.4(@near-js/keystores@2.5.1(@near-js/crypto@2.5.1(@near-js/types@2.5.1)(@near-js/utils@2.5.1(@near-js/types@2.5.1)))(@near-js/types@2.5.1))(@near-js/types@2.5.1)(@near-js/utils@2.5.1(@near-js/types@2.5.1))
+      '@near-wallet-selector/okx-wallet':
+        specifier: 10.1.4
+        version: 10.1.4(@near-js/keystores@2.5.1(@near-js/crypto@2.5.1(@near-js/types@2.5.1)(@near-js/utils@2.5.1(@near-js/types@2.5.1)))(@near-js/types@2.5.1))(@near-js/utils@2.5.1(@near-js/types@2.5.1))
       '@near-wallet-selector/wallet-connect':
         specifier: 10.1.4
         version: 10.1.4(@types/react@19.3.0)(bufferutil@4.1.0)(react@19.3.1)(typescript@6.0.3)(utf-8-validate@6.0.6)(zod@3.25.76)
@@ -1171,6 +1174,9 @@ packages:
 
   '@near-wallet-selector/nightly@10.1.4':
     resolution: {integrity: sha512-8gQLgAa1SElpNcnYKg19GxOKacpla04OmdCHedGYi+qMEgDsZrreNy/rSTGMO+vENtljfD2dCxVq0H3Ehuv29g==}
+
+  '@near-wallet-selector/okx-wallet@10.1.4':
+    resolution: {integrity: sha512-xltIn3ZbXJZSNcM7gjweiZLwlxRl8//oHvMRc9145qRmVy/mR/2oGNvZ+9OgZuS2/46kyxaHKNc22BG/pcpirA==}
 
   '@near-wallet-selector/wallet-connect@10.1.4':
     resolution: {integrity: sha512-7C8ROLo7DDxjXi0mfSVZ9wirGCDSIJhcyMF305VPIp3n2XOFASbpFR/Uizmi9GLY9j8hmCI4LyYvscJ4w8YXMg==}
@@ -5233,6 +5239,15 @@ snapshots:
     transitivePeerDependencies:
       - '@near-js/keystores'
       - '@near-js/types'
+      - '@near-js/utils'
+      - encoding
+
+  '@near-wallet-selector/okx-wallet@10.1.4(@near-js/keystores@2.5.1(@near-js/crypto@2.5.1(@near-js/types@2.5.1)(@near-js/utils@2.5.1(@near-js/types@2.5.1)))(@near-js/types@2.5.1))(@near-js/utils@2.5.1(@near-js/types@2.5.1))':
+    dependencies:
+      '@near-wallet-selector/core': 10.1.4(@near-js/keystores@2.5.1(@near-js/crypto@2.5.1(@near-js/types@2.5.1)(@near-js/utils@2.5.1(@near-js/types@2.5.1)))(@near-js/types@2.5.1))(@near-js/utils@2.5.1(@near-js/types@2.5.1))
+      is-mobile: 4.0.0
+    transitivePeerDependencies:
+      - '@near-js/keystores'
       - '@near-js/utils'
       - encoding
 
