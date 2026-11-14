@@ -1,6 +1,5 @@
 "use client";
 
-import { useTheme } from "next-themes";
 import { useEffect, useRef, useState } from "react";
 
 interface Scene {
@@ -35,7 +34,6 @@ export function Globe() {
   const box = useRef<HTMLDivElement>(null);
   const scene = useRef<Scene | null>(null);
   const [ready, setReady] = useState(false);
-  const { resolvedTheme } = useTheme();
 
   useEffect(() => {
     let cancelled = false;
@@ -70,9 +68,19 @@ export function Globe() {
     };
   }, []);
 
+  // Follow the page's theme attribute itself: next-themes sets it in its own effect, after this component's effects
+  // have run, so reading it on a theme change got the old theme and painted a light (white) globe in dark mode.
   useEffect(() => {
-    scene.current?.setColors(colors());
-  }, [resolvedTheme, ready]);
+    if (!ready) return;
+    const paint = () => scene.current?.setColors(colors());
+    paint();
+    const watch = new MutationObserver(paint);
+    watch.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme", "class", "style"],
+    });
+    return () => watch.disconnect();
+  }, [ready]);
 
   return (
     <div ref={box} className="relative aspect-square w-full">

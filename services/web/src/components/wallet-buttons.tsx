@@ -92,6 +92,7 @@ export function WalletConnectView({ wallet, chosen }: { wallet: PayWallet; chose
   if (wallet.address)
     return (
       <div className="flex flex-wrap items-center gap-2">
+        {wallet.walletName ? <span className="caption">{wallet.walletName}</span> : null}
         <AddressChip
           value={wallet.address}
           chain={wallet.kind === "solana" ? "solana" : wallet.kind === "near" ? "near" : "ethereum"}
@@ -101,9 +102,26 @@ export function WalletConnectView({ wallet, chosen }: { wallet: PayWallet; chose
         </Button>
       </div>
     );
+  if (wallet.choices.length > 1)
+    return (
+      <div className="flex flex-col items-start gap-2">
+        <p className="caption">{t.pickEvmWallet}</p>
+        <div className="flex flex-wrap gap-2">
+          {wallet.choices.map((w) => (
+            <Button key={w.id} size="sm" variant="secondary" onClick={() => wallet.connect(w.id)}>
+              {w.icon ? (
+                <img src={w.icon} alt="" width={18} height={18} className="size-[18px] rounded" />
+              ) : null}
+              {w.name}
+            </Button>
+          ))}
+        </div>
+        {wallet.error ? <p className="text-danger text-[13px]">{t.evmFailed}</p> : null}
+      </div>
+    );
   return (
     <div className="flex flex-col items-start gap-1">
-      <Button size="sm" onClick={wallet.connect}>
+      <Button size="sm" onClick={() => wallet.connect()}>
         {wallet.kind === "solana"
           ? t.connectSolana
           : wallet.kind === "near"

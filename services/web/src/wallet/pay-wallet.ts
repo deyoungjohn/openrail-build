@@ -15,8 +15,12 @@ export interface PayWallet {
   /** A way to connect a wallet exists for this route. */
   available: boolean;
   error: boolean;
-  /** Connects the wallet of the route's chain family. */
-  connect: () => void;
+  /** The wallets the payer can pick from (EVM: each installed one); empty when there is just one way. */
+  choices: { id: string; name: string; icon: string }[];
+  /** The name of the connected wallet, when known. */
+  walletName: string | null;
+  /** Connects the wallet of the route's chain family (the picked one, for EVM). */
+  connect: (id?: string) => void;
   disconnect: () => void;
   /** Sends `amount` (the origin asset's base units) to `to` from the connected wallet; returns the hash. */
   pay: (to: string, amount: bigint) => Promise<string>;
@@ -27,6 +31,8 @@ const NONE: PayWallet = {
   address: null,
   available: false,
   error: false,
+  choices: [],
+  walletName: null,
   connect: () => undefined,
   disconnect: () => undefined,
   pay: async () => {
@@ -51,6 +57,8 @@ export function usePayWallet(route: Route | null): PayWallet {
       address: near.accountId,
       available: near.ready,
       error: near.error,
+      choices: [],
+      walletName: null,
       connect: () => near.signIn(),
       disconnect: () => void near.signOut(),
       pay: async (to, amount) => {
@@ -69,7 +77,10 @@ export function usePayWallet(route: Route | null): PayWallet {
       address: sol.address,
       available: sol.available,
       error: sol.error,
-      connect: () => void sol.connect(),
+      choices:
+        sol.wallets.length > 1 ? sol.wallets.map(({ id, name }) => ({ id, name, icon: "" })) : [],
+      walletName: sol.connectedName,
+      connect: (id) => void sol.connect(id),
       disconnect: sol.disconnect,
       pay: (to, amount) =>
         sol.pay({
@@ -85,7 +96,10 @@ export function usePayWallet(route: Route | null): PayWallet {
     address: evm.address,
     available: evm.available,
     error: evm.error,
-    connect: () => void evm.connect(),
+    choices:
+      evm.wallets.length > 1 ? evm.wallets.map(({ id, name, icon }) => ({ id, name, icon })) : [],
+    walletName: evm.connectedName,
+    connect: (id) => void evm.connect(id),
     disconnect: evm.disconnect,
     pay: (to, amount) =>
       evm.pay({

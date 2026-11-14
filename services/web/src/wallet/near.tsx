@@ -171,8 +171,23 @@ export function NearProvider({ children }: { children: ReactNode }) {
   const signOut = useCallback(async () => {
     const s = selector.current;
     if (!s?.isSignedIn()) return;
-    const wallet = await s.wallet();
-    await wallet.signOut();
+    try {
+      const wallet = await s.wallet();
+      await wallet.signOut();
+    } catch (e) {
+      // A wallet whose sign-out fails must not stay connected: drop what the selector remembers, so the next sign-in
+      // asks which wallet again.
+      console.error("near sign-out failed", e);
+      try {
+        for (const k of Object.keys(window.localStorage))
+          if (k.startsWith("near-wallet-selector") || k.startsWith("near_app_wallet"))
+            window.localStorage.removeItem(k);
+      } catch {
+        // Storage is blocked; the state below still shows the person as signed out.
+      }
+      setAccountId(null);
+      setWalletId(null);
+    }
   }, []);
 
   const callBatch = useCallback(

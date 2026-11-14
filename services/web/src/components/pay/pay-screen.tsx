@@ -255,9 +255,55 @@ function WalletPay({ session, route }: { session: Session; route: Route }) {
     <div className="w-full space-y-3">
       <div className="flex justify-center">
         {wallet.address ? (
-          <Button type="button" onClick={() => void send()} loading={busy} disabled={sent !== null}>
-            {p.walletPay(amount)}
-          </Button>
+          <div className="flex flex-col items-center gap-2">
+            <Button
+              type="button"
+              onClick={() => void send()}
+              loading={busy}
+              disabled={sent !== null}
+            >
+              {p.walletPay(amount)}
+            </Button>
+            {sent === null && !busy ? (
+              <button
+                type="button"
+                onClick={wallet.disconnect}
+                className="caption min-h-11 px-2 underline-offset-2 hover:text-text hover:underline"
+              >
+                {wallet.walletName ? `${wallet.walletName} · ` : ""}
+                {wallet.address.length > 14
+                  ? `${wallet.address.slice(0, 6)}…${wallet.address.slice(-4)}`
+                  : wallet.address}{" "}
+                · {copy.wallet.useAnother}
+              </button>
+            ) : null}
+          </div>
+        ) : wallet.choices.length > 1 ? (
+          // More than one wallet of this kind is installed: the payer picks, so it is never just the last one used.
+          <div className="flex flex-col items-center gap-2">
+            <p className="caption">{copy.wallet.pickEvmWallet}</p>
+            <div className="flex flex-wrap justify-center gap-2">
+              {wallet.choices.map((w) => (
+                <Button
+                  key={w.id}
+                  type="button"
+                  variant="secondary"
+                  onClick={() => wallet.connect(w.id)}
+                >
+                  {w.icon ? (
+                    <img
+                      src={w.icon}
+                      alt=""
+                      width={18}
+                      height={18}
+                      className="size-[18px] rounded"
+                    />
+                  ) : null}
+                  {w.name}
+                </Button>
+              ))}
+            </div>
+          </div>
         ) : (
           <Button type="button" variant="secondary" onClick={() => wallet.connect()}>
             {p.walletConnect}
