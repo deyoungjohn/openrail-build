@@ -40,7 +40,7 @@ export const MENUS: { label: string; items: MenuItem[] }[] = [
   {
     label: "Developers",
     items: [
-      { label: "Developer hub", href: "/app/developers", note: "API keys and webhooks" },
+      { label: "API Integration", href: "/app/developers", note: "API keys and webhooks" },
       {
         label: "Documentation",
         href: `${REPO}/tree/main/docs`,

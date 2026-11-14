@@ -4,7 +4,6 @@ import { useState } from "react";
 import { AddressChip } from "@/components/ui/address-chip";
 import { Button } from "@/components/ui/button";
 import { ErrorNote } from "@/components/ui/error-note";
-import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import { dashClient } from "@/lib/client";
@@ -242,51 +241,6 @@ async function heldState(rows: readonly TrailRow[]): Promise<HeldState[]> {
   }
 }
 
-/** Adds a withdrawal made before they were recorded here (or from the CLI), by the deposit address of its quote. */
-function AddEarlierWithdrawal({ onAdded }: { onAdded: () => void }) {
-  const [address, setAddress] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [problem, setProblem] = useState<string | null>(null);
-  const add = async () => {
-    setBusy(true);
-    setProblem(null);
-    try {
-      await dashClient.confidential.importWithdrawal(address.trim());
-      setAddress("");
-      onAdded();
-    } catch (e) {
-      setProblem(
-        (e as { code?: string }).code === "withdrawal_not_found"
-          ? "No withdrawal of yours has that deposit address."
-          : "We couldn't add it. Check the address and try again.",
-      );
-    } finally {
-      setBusy(false);
-    }
-  };
-  return (
-    <div className="px-6 pb-5">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
-        <div className="flex-1">
-          <Input
-            label="Add an earlier withdrawal (deposit address)"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-          />
-        </div>
-        <Button
-          variant="secondary"
-          onClick={() => void add()}
-          disabled={busy || address.trim().length < 8}
-        >
-          {busy ? "Adding" : "Add"}
-        </Button>
-      </div>
-      <ErrorNote>{problem}</ErrorNote>
-    </div>
-  );
-}
-
 export function MoneyTrailCard({ trail }: { trail: ReturnType<typeof useTrail> }) {
   const [data, retry] = trail;
   const [biz] = useAsync(() => dashClient.business.get(), []);
@@ -295,7 +249,7 @@ export function MoneyTrailCard({ trail }: { trail: ReturnType<typeof useTrail> }
     ...WORDS,
     held: { label: WORDS.held.label, hint: heldHint(schedule) },
   };
-  const [withdrawals, reloadWithdrawals] = useAsync(
+  const [withdrawals] = useAsync(
     () =>
       dashClient.confidential
         .withdrawals()
@@ -485,7 +439,6 @@ export function MoneyTrailCard({ trail }: { trail: ReturnType<typeof useTrail> }
             )
           }
         />
-        <AddEarlierWithdrawal onAdded={reloadWithdrawals} />
       </Card>
     </div>
   );

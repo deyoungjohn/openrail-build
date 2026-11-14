@@ -88,7 +88,7 @@ export function FauxDashboard() {
             [LayoutGrid, "Dashboard", true],
             [FileText, "Invoices", false],
             [Wallet, "Cash out", false],
-            [Plug, "Developers", false],
+            [Plug, "API Integration", false],
           ].map(([Icon, label, on]) => {
             const I = Icon as typeof LayoutGrid;
             return (
