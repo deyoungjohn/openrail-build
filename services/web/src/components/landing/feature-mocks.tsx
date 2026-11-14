@@ -512,7 +512,7 @@ function AgentsMock() {
       <p className="mt-3 flex items-center gap-1.5 font-sans text-[12px] text-success-text">
         <CheckCircle2 aria-hidden size={14} /> Ready to sign: approval link sent to you
       </p>
-      <p className="mt-3 text-muted">agent → openrail.list_claims {"status": "Paid"}</p>
+      <p className="mt-3 text-muted">agent → openrail.list_claims {'{ "status": "Paid" }'}</p>
       <p className="mt-1 flex items-center gap-1.5 font-sans text-[12px]">
         <FileText aria-hidden size={13} /> 3 paid this week, $1,486.80
       </p>
