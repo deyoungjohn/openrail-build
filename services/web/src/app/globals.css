@@ -258,6 +258,37 @@ h3 {
   animation: rise var(--dur-slow) var(--ease) both;
 }
 
+/* Scroll reveal (components/landing/reveal.tsx). The animation plays at first paint from the server HTML; the
+   component parks what is below the screen ("wait") and starts it again on entry ("in"). Only `from` is given, so
+   nothing stays applied afterwards. It animates `translate`, the property Tailwind 4's translate-* classes write. */
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    translate: var(--reveal-x, 0px) var(--reveal-y, 24px);
+  }
+}
+.reveal {
+  animation: reveal-in 700ms cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay, 0ms) backwards;
+}
+.reveal[data-reveal="wait"] {
+  opacity: 0;
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal[data-reveal="wait"] {
+    opacity: 1;
+    animation: none;
+  }
+}
+@media print {
+  .reveal,
+  .reveal[data-reveal="wait"] {
+    opacity: 1;
+    animation: none;
+  }
+}
+
 dialog.overlay {
   padding: 0;
   border: 0;
