@@ -91,6 +91,8 @@ export function NearProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState(false);
   const [wallets, setWallets] = useState<NearWalletInfo[]>([]);
   const probed = useRef(false);
+  /** True after a sign-out, until the next sign-in: the selector's store still lists the old account. */
+  const signedOut = useRef(false);
   const [picker, setPicker] = useState<null | {
     purpose: PickerPurpose;
     done: (id: string | null) => void;
@@ -105,8 +107,10 @@ export function NearProvider({ children }: { children: ReactNode }) {
         selector.current = s;
         const sub = s.store.observable.subscribe((state) => {
           const active = state.accounts.find((a) => a.active) ?? state.accounts[0];
-          setAccountId(active?.accountId ?? null);
-          setWalletId(state.selectedWalletId);
+          if (!signedOut.current) {
+            setAccountId(active?.accountId ?? null);
+            setWalletId(state.selectedWalletId);
+          }
           setWallets((prev) =>
             state.modules.map((m) => ({
               id: m.id,
@@ -161,39 +165,39 @@ export function NearProvider({ children }: { children: ReactNode }) {
     // key. Adding one is a transaction, and some wallets refuse it below 0.1 NEAR. Every
     // transaction we ask for later (sell, acknowledge, deposit) is approved in the wallet itself.
     const accounts = await abortable(w.signIn(signInParams(id, ROOT_CONTRACT) as never), signal);
-    return accounts[0]?.accountId ?? s.store.getState().accounts[0]?.accountId;
+    signedOut.current = false;
+    const state = s.store.getState();
+    const account = accounts[0]?.accountId ?? state.accounts[0]?.accountId;
+    // The store may not change when the same wallet signs in again after a local sign-out, so set it here.
+    setAccountId(account ?? null);
+    setWalletId(state.selectedWalletId ?? id);
+    return account;
   }, []);
 
   const signIn = useCallback(() => {
     void pickWallet("connect").then((id) => (id ? connect(id) : undefined));
   }, [pickWallet, connect]);
 
+  // Sign-out is local: the selector's saved session is dropped and no wallet is called. Sign-in never adds an access
+  // key (see `connect`), so there is nothing in the wallet to revoke, and asking the wallet module to sign out opened
+  // Meteor's pop-up on the pay page (14 Nov). Until the next sign-in the store's old account is ignored.
   const signOut = useCallback(async () => {
-    const s = selector.current;
-    if (!s?.isSignedIn()) return;
+    signedOut.current = true;
     try {
-      const wallet = await s.wallet();
-      await wallet.signOut();
-    } catch (e) {
-      // A wallet whose sign-out fails must not stay connected: drop what the selector remembers, so the next sign-in
-      // asks which wallet again.
-      console.error("near sign-out failed", e);
-      try {
-        for (const k of Object.keys(window.localStorage))
-          if (k.startsWith("near-wallet-selector") || k.startsWith("near_app_wallet"))
-            window.localStorage.removeItem(k);
-      } catch {
-        // Storage is blocked; the state below still shows the person as signed out.
-      }
-      setAccountId(null);
-      setWalletId(null);
+      for (const k of Object.keys(window.localStorage))
+        if (k.startsWith("near-wallet-selector") || k.startsWith("near_app_wallet"))
+          window.localStorage.removeItem(k);
+    } catch {
+      // Storage is blocked; the state below still shows the person as signed out.
     }
+    setAccountId(null);
+    setWalletId(null);
   }, []);
 
   const callBatch = useCallback(
     async (receiverId: string, calls: Omit<NearCall, "receiverId">[]) => {
       const s = selector.current;
-      if (!s?.isSignedIn()) throw new Error("NOT_SIGNED_IN");
+      if (!s?.isSignedIn() || signedOut.current) throw new Error("NOT_SIGNED_IN");
       const wallet = await s.wallet();
       const outcome = (await wallet.signAndSendTransaction({
         receiverId,
@@ -209,7 +213,7 @@ export function NearProvider({ children }: { children: ReactNode }) {
 
   const call = useCallback(async (c: NearCall) => {
     const s = selector.current;
-    if (!s?.isSignedIn()) throw new Error("NOT_SIGNED_IN");
+    if (!s?.isSignedIn() || signedOut.current) throw new Error("NOT_SIGNED_IN");
     const wallet = await s.wallet();
     const outcome = (await wallet.signAndSendTransaction({
       receiverId: c.receiverId,
