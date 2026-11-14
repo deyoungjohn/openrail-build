@@ -162,6 +162,14 @@ export default function FeaturesPage() {
                     {f.title}
                   </h2>
                   <p className="mt-4 max-w-[46ch] text-[16px] leading-7 text-muted">{f.subtitle}</p>
+                  {f.href ? (
+                    <a
+                      href={f.href}
+                      className="mt-5 inline-flex h-11 items-center rounded-full bg-accent px-5 text-[14px] font-semibold text-on-accent hover:bg-accent-hover"
+                    >
+                      See the Agent MCP page
+                    </a>
+                  ) : null}
                 </Reveal>
                 <Reveal delay={100} className={cn(flip && "lg:order-1")}>
                   <div className={cn("rounded-[22px] p-4 sm:p-7", TINTS[i % TINTS.length])}>

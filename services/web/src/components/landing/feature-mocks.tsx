@@ -505,14 +505,14 @@ function AgentsMock() {
   return (
     <Panel className="font-mono text-[11.5px]">
       <p className="text-muted">you › bill Northwind $250 for the December retainer</p>
-      <p className="mt-3 text-muted">agent → openrail.create_invoice</p>
-      <pre className="mt-1 rounded-xl bg-surface-2 p-3 whitespace-pre-wrap">{`{ "client": "Northwind",
-  "amount_usd": "250.00",
-  "due": "2026-12-01" }`}</pre>
+      <p className="mt-3 text-muted">agent → openrail.prepare_invoice</p>
+      <pre className="mt-1 rounded-xl bg-surface-2 p-3 whitespace-pre-wrap">{`{ "debtor": "northwind.near",
+  "amountDue": "250000000",
+  "dueDate": "2026-12-01" }`}</pre>
       <p className="mt-3 flex items-center gap-1.5 font-sans text-[12px] text-success-text">
-        <CheckCircle2 aria-hidden size={14} /> Pay link ready: openrail.app/pay/inv_7Q2…
+        <CheckCircle2 aria-hidden size={14} /> Ready to sign: approval link sent to you
       </p>
-      <p className="mt-3 text-muted">agent → openrail.list_payments</p>
+      <p className="mt-3 text-muted">agent → openrail.list_claims {"status": "Paid"}</p>
       <p className="mt-1 flex items-center gap-1.5 font-sans text-[12px]">
         <FileText aria-hidden size={13} /> 3 paid this week, $1,486.80
       </p>

@@ -36,7 +36,7 @@ export const MENUS: { label: string; items: MenuItem[] }[] = [
       },
       {
         label: "Agent MCP",
-        href: "/features#agents",
+        href: "/agents",
         note: "Let an AI agent issue and track payments",
       },
     ],

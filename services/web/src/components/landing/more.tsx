@@ -4,10 +4,12 @@ import {
   ArrowRight,
   ArrowUpRight,
   BarChart3,
+  Bot,
   Code2,
   FileCheck2,
   FileSpreadsheet,
   Lock,
+  ShoppingCart,
   Store,
 } from "lucide-react";
 import { BouncyAccordion } from "@/components/ui/bouncy-accordion";
@@ -166,6 +168,8 @@ const ICONS: Record<string, typeof BarChart3> = {
   confidential: Lock,
   api: Code2,
   stores: Store,
+  checkout: ShoppingCart,
+  agents: Bot,
 };
 // The landing cards: the features with a card line, each pointing at its section on the Features page.
 const CARDS = FEATURE_LIST.filter((f) => f.card !== undefined && ICONS[f.id] !== undefined);
@@ -181,7 +185,7 @@ export function Features() {
           where you want it.
         </p>
       </Reveal>
-      <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {CARDS.map((f, i) => {
           const Icon = ICONS[f.id] as typeof BarChart3;
           return (

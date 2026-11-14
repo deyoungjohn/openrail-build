@@ -9,6 +9,8 @@ export interface Feature {
   subtitle: string;
   /** The short line on the landing page's card (only for the features shown there). */
   card?: string;
+  /** A page of its own, when the feature has one: cards and links go there instead of the section. */
+  href?: string;
 }
 
 export const FEATURES: Feature[] = [
@@ -23,6 +25,7 @@ export const FEATURES: Feature[] = [
     title: "A Hosted Checkout",
     subtitle:
       "One API call opens a checkout for an order. The payer picks a coin and a chain, pays from a connected wallet or an exchange, and your store hears back by webhook.",
+    card: "A hosted checkout for any store, paid from any chain; your store hears back by webhook.",
   },
   {
     id: "dashboards",
@@ -82,8 +85,11 @@ export const FEATURES: Feature[] = [
     id: "agents",
     title: "Made For AI Agents",
     subtitle:
-      "The MCP server lets an agent issue invoices, open checkouts and check what was paid, under the same rules as the API.",
+      "The MCP server lets an agent check what was paid, fetch receipts, send pay links and prepare invoices. It holds no keys: you sign.",
+    card: "An MCP server for your AI agent. It reads and prepares; you approve in your wallet.",
+    href: "/agents",
   },
 ];
 
-export const featureHref = (id: string) => `/features#${id}`;
+export const featureHref = (id: string) =>
+  FEATURES.find((f) => f.id === id)?.href ?? `/features#${id}`;

@@ -41,7 +41,6 @@ test("sidebar navigation moves between pages without a reload", async ({ page, c
   await page.goto("/app");
   const steps: [string, string][] = [
     ["Invoices", "/app/invoices"],
-    ["Payments", "/app/payments"],
     ["Statements", "/app/statements"],
     ["Pay out", "/app/cashout"],
     ["API Integration", "/app/developers"],

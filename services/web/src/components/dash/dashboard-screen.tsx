@@ -106,7 +106,6 @@ const streamOptions: { value: Stream | "all"; label: string }[] = [
   { value: "all", label: copy.dash.allStreams },
   { value: "invoice", label: copy.dash.streamLabels.invoice },
   { value: "checkout", label: copy.dash.streamLabels.checkout },
-  { value: "pay_link", label: copy.dash.streamLabels.pay_link },
 ];
 
 function Collections({ earnings }: { earnings: readonly Earning[] }) {

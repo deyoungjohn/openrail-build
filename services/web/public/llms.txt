@@ -15,7 +15,7 @@
 - Invoices: bill a client with lines and a due date; they pay from any supported chain.
 - Checkout: a hosted pay page per order, for Shopify, WooCommerce or any store through the API.
 - Confidential payouts: payments move to a confidential balance on NEAR Intents that only the business can see.
-- Agent MCP: an MCP server so an AI agent can issue invoices, open checkouts and check payments.
+- [Agent MCP](/agents): an MCP server so an AI agent can check payments, fetch receipts, send pay links and prepare invoices; it holds no keys and never signs.
 
 ## Developers
 - [Documentation](https://github.com/deyoungjohn/openrail/tree/main/docs)
