@@ -1,8 +1,18 @@
 "use client";
 
-import { BarChart3, Code2, FileCheck2, FileSpreadsheet, Lock, Store } from "lucide-react";
+import {
+  ArrowRight,
+  ArrowUpRight,
+  BarChart3,
+  Code2,
+  FileCheck2,
+  FileSpreadsheet,
+  Lock,
+  Store,
+} from "lucide-react";
 import { BouncyAccordion } from "@/components/ui/bouncy-accordion";
 import { ChainIcon, CHAINS, CoinIcon, type ChainId } from "@/components/ui/chain-badge";
+import { FEATURES as FEATURE_LIST, featureHref } from "./features-data";
 import { Reveal } from "./reveal";
 import { Ring, type RingItem } from "./ring";
 
@@ -149,38 +159,16 @@ export function Showcase() {
   );
 }
 
-const FEATURES = [
-  {
-    icon: BarChart3,
-    title: "Dashboards And Analytics",
-    body: "Revenue, activity, top clients and chains, from the payments booked on chain.",
-  },
-  {
-    icon: FileCheck2,
-    title: "Receipts",
-    body: "A receipt page and PDF for every payment, with the explorer links and the terms fingerprint.",
-  },
-  {
-    icon: FileSpreadsheet,
-    title: "Statements",
-    body: "Download a statement for any period; its fingerprint proves the file was not edited.",
-  },
-  {
-    icon: Lock,
-    title: "Confidential Payouts",
-    body: "Move payments to a confidential balance on NEAR Intents and withdraw to any chain.",
-  },
-  {
-    icon: Code2,
-    title: "API And Webhooks",
-    body: "OpenAPI, API keys and signed webhooks for every invoice and checkout event.",
-  },
-  {
-    icon: Store,
-    title: "Store Integrations",
-    body: "A Shopify app and a WooCommerce plugin; any other store with one API call.",
-  },
-];
+const ICONS: Record<string, typeof BarChart3> = {
+  dashboards: BarChart3,
+  receipts: FileCheck2,
+  statements: FileSpreadsheet,
+  confidential: Lock,
+  api: Code2,
+  stores: Store,
+};
+// The landing cards: the features with a card line, each pointing at its section on the Features page.
+const CARDS = FEATURE_LIST.filter((f) => f.card !== undefined && ICONS[f.id] !== undefined);
 
 /** What a business gets beyond being paid. */
 export function Features() {
@@ -194,18 +182,43 @@ export function Features() {
         </p>
       </Reveal>
       <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {FEATURES.map((f, i) => (
-          <Reveal key={f.title} delay={(i % 3) * 100}>
-            <article className="h-full rounded-[22px] border border-border bg-surface p-6">
-              <span className="grid size-11 place-items-center rounded-xl bg-accent-soft text-accent-text">
-                <f.icon aria-hidden size={20} />
-              </span>
-              <h3 className="mt-5 text-[18px] leading-[26px] font-semibold">{f.title}</h3>
-              <p className={`mt-2 ${BODY}`}>{f.body}</p>
-            </article>
-          </Reveal>
-        ))}
+        {CARDS.map((f, i) => {
+          const Icon = ICONS[f.id] as typeof BarChart3;
+          return (
+            <Reveal key={f.id} delay={(i % 3) * 100}>
+              <a
+                href={featureHref(f.id)}
+                className="group block h-full rounded-[22px] border border-border bg-surface p-6 transition-colors hover:border-accent"
+              >
+                <span className="grid size-11 place-items-center rounded-xl bg-accent-soft text-accent-text">
+                  <Icon aria-hidden size={20} />
+                </span>
+                <h3 className="mt-5 text-[18px] leading-[26px] font-semibold">{f.title}</h3>
+                <p className={`mt-2 ${BODY}`}>{f.card}</p>
+                <span className="mt-4 inline-flex items-center gap-1 text-[14px] font-medium text-accent-text">
+                  Learn more
+                  <ArrowRight
+                    aria-hidden
+                    size={15}
+                    className="transition-transform group-hover:translate-x-0.5"
+                  />
+                </span>
+              </a>
+            </Reveal>
+          );
+        })}
       </div>
+      <Reveal className="mt-8 flex justify-center">
+        <a
+          href="/features"
+          className="group inline-flex h-14 items-center gap-3 rounded-full bg-accent py-2 pr-2 pl-6 text-[15px] font-medium text-on-accent hover:bg-accent-hover"
+        >
+          See all features
+          <span className="grid size-10 place-items-center rounded-full bg-on-accent text-accent transition-transform group-hover:rotate-45">
+            <ArrowUpRight aria-hidden size={18} />
+          </span>
+        </a>
+      </Reveal>
     </section>
   );
 }
@@ -246,7 +259,7 @@ export function Faq() {
     <section className="mx-auto grid max-w-[1240px] gap-10 px-4 py-24 sm:px-6 lg:grid-cols-[1fr_1.4fr]">
       <Reveal>
         <p className="text-[14px] font-medium text-muted">Questions</p>
-        <h2 className={`mt-2 ${H2}`}>Frequently Asked Questions</h2>
+        <h2 className={`mt-2 ${H2}`}>Got Questions? We've Got Answers</h2>
         <p className={`mt-4 max-w-[40ch] ${BODY}`}>
           Something else? The code and the docs are open on GitHub.
         </p>

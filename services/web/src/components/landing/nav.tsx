@@ -105,6 +105,12 @@ export function LandingNav() {
             </div>
           ))}
           <Link
+            href="/how-it-works"
+            className="flex h-10 items-center rounded-full px-4 text-[14px] font-medium hover:bg-surface-2"
+          >
+            How it works
+          </Link>
+          <Link
             href="/proof"
             className="flex h-10 items-center rounded-full px-4 text-[14px] font-medium hover:bg-surface-2"
           >
@@ -153,6 +159,12 @@ export function LandingNav() {
               </div>
             ))}
             <div className="flex gap-2">
+              <Link
+                href="/how-it-works"
+                className="flex h-11 flex-1 items-center justify-center rounded-full border border-border text-[14px] font-semibold"
+              >
+                How it works
+              </Link>
               <Link
                 href="/proof"
                 className="flex h-11 flex-1 items-center justify-center rounded-full border border-border text-[14px] font-semibold"

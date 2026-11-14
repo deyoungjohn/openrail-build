@@ -12,11 +12,33 @@ export interface MenuItem {
 
 export const MENUS: { label: string; items: MenuItem[] }[] = [
   {
-    label: "Products",
+    label: "Features",
     items: [
-      { label: "Invoices", href: "/#invoices", note: "Bill a client; they pay from any chain" },
-      { label: "Checkout", href: "/#checkout", note: "A hosted stablecoin checkout for stores" },
-      { label: "Agent MCP", href: "/#agents", note: "Let an AI agent issue and track payments" },
+      {
+        label: "All features",
+        href: "/features",
+        note: "Everything Openrail does, screen by screen",
+      },
+      {
+        label: "Invoices",
+        href: "/features#invoices",
+        note: "Bill a client; they pay from any chain",
+      },
+      {
+        label: "Checkout",
+        href: "/features#checkout",
+        note: "A hosted stablecoin checkout for stores",
+      },
+      {
+        label: "Confidential payouts",
+        href: "/features#confidential",
+        note: "A balance only you can see",
+      },
+      {
+        label: "Agent MCP",
+        href: "/features#agents",
+        note: "Let an AI agent issue and track payments",
+      },
     ],
   },
   {
