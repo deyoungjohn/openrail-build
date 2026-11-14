@@ -239,7 +239,7 @@ function WalletPay({ session, route }: { session: Session; route: Route }) {
       void client.pay.nudgeDeposit(session.id, hash).catch(() => undefined);
     } catch (e) {
       const code = (e as { code?: number } | null)?.code;
-      const why = e instanceof Error ? e.message.slice(0, 80) : "";
+      const why = e instanceof Error ? e.message : "";
       console.error("wallet payment failed", e);
       // Say why when the wallet or the network said something (the Solana RPC refusing a browser, no SOL for the account rent).
       setProblem(
