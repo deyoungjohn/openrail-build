@@ -164,7 +164,7 @@ export function PayoutsPanel() {
             label: "Withdraw",
             panel: (
               <div className="space-y-6 py-1">
-                {auth.state.status === "signedIn" ? <WithdrawCard approxUnits={0n} /> : null}
+                {auth.state.status === "signedIn" ? <WithdrawCard /> : null}
               </div>
             ),
           },

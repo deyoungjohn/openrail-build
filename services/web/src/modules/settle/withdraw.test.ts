@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { base58, checkIntent, ed25519Signature, signedIntent } from "./withdraw";
+import { base58, checkIntent, ed25519Signature, heldChain, signedIntent } from "./withdraw";
 
 describe("base58", () => {
   it("matches known vectors", () => {
@@ -68,5 +68,22 @@ describe("the intent", () => {
     expect(() => checkIntent(ok, { depositAddress: "dep123", accountId: "someone.near" })).toThrow(
       "UNEXPECTED_INTENT_SIGNER:me.near",
     );
+  });
+});
+
+describe("heldChain", () => {
+  it("names the chain of each settlement USDC in the confidential balance", () => {
+    expect(heldChain("nep141:sol-5ce3bf3a31af18be40ba30f721101b4341690186.omft.near").chain).toBe(
+      "solana",
+    );
+    expect(
+      heldChain("nep141:base-0x833589fcd6edb6e08f4c7c32d4f71b54bda02913.omft.near").chain,
+    ).toBe("base");
+    expect(heldChain("nep141:arb-0xaf88d065e77c8cc2239327c5edb3a432268e5831.omft.near").chain).toBe(
+      "arbitrum",
+    );
+    expect(
+      heldChain("nep141:17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1").label,
+    ).toBe("NEAR");
   });
 });

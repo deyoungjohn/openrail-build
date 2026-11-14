@@ -1,4 +1,5 @@
 /** Pure parts of the confidential-balance withdrawal: the exact payload the wallet signs and what is sent back. */
+import type { ChainId } from "@/components/ui/chain-badge";
 
 const ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 
@@ -98,4 +99,17 @@ export function checkIntent(
   } catch (e) {
     if (e instanceof Error && e.message.startsWith("UNEXPECTED_")) throw e;
   }
+}
+
+/**
+ * Which chain's USDC a token in the confidential balance is. The shield moves each payment in as the USDC it settled in,
+ * so the balance can hold USDC from several chains; a withdrawal takes from one of them, and only what that one holds.
+ * (It used to always take USDC on NEAR: once payments settled on Solana and Base, that one was empty and the provider
+ * ended every withdrawal as FAILED.)
+ */
+export function heldChain(tokenId: string): { label: string; chain: ChainId } {
+  if (tokenId.startsWith("nep141:sol-")) return { label: "Solana", chain: "solana" };
+  if (tokenId.startsWith("nep141:base-")) return { label: "Base", chain: "base" };
+  if (tokenId.startsWith("nep141:arb-")) return { label: "Arbitrum", chain: "arbitrum" };
+  return { label: "NEAR", chain: "near" };
 }

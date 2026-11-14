@@ -77,35 +77,49 @@ function withdrawalLabel(status: string): string {
   return "Withdrawing";
 }
 
-type PrivateBalance =
+/** One token in the confidential balance (USDC on one chain) and how much of it is free to withdraw. */
+export interface HeldToken {
+  tokenId: string;
+  units: bigint;
+}
+
+export type PrivateBalance =
   | { state: "loading" }
   | { state: "locked" }
   | { state: "signing" }
-  | { state: "ready"; units: bigint }
+  | { state: "ready"; units: bigint; tokens: HeldToken[] }
   | { state: "error"; message: string };
 
 /**
  * The real confidential balance, from the provider. Reading it needs a session the merchant signs once (an empty intent with
  * a versioned nonce, prepared by the API); the API keeps the session, so the browser never holds the provider's token.
  */
-function usePrivateBalance(): [PrivateBalance, () => void] {
+export function usePrivateBalance(): [PrivateBalance, () => void] {
   const near = useNear();
   const [value, setValue] = useState<PrivateBalance>({ state: "loading" });
   const read = async (): Promise<boolean> => {
     try {
       const b = await dashClient.confidential.balance();
-      const units = b.balances.reduce(
-        (sum, e) => sum + (/^\d+$/.test(e.available) ? BigInt(e.available) : 0n),
-        0n,
-      );
-      setValue({ state: "ready", units });
+      // One entry per token (the same USDC can arrive on several chains), largest first.
+      const tokens = b.balances
+        .map((e) => ({
+          tokenId: e.token_id,
+          units: /^\d+$/.test(e.available) ? BigInt(e.available) : 0n,
+        }))
+        .filter((t) => t.units > 0n)
+        .sort((a, b) => (b.units > a.units ? 1 : b.units < a.units ? -1 : 0));
+      const units = tokens.reduce((sum, t) => sum + t.units, 0n);
+      setValue({ state: "ready", units, tokens });
       return true;
     } catch (e) {
       if ((e as { code?: string }).code === "confidential_session_required") {
         setValue({ state: "locked" });
         return false;
       }
-      setValue({ state: "error", message: "We couldn't read your confidential balance. Try again." });
+      setValue({
+        state: "error",
+        message: "We couldn't read your confidential balance. Try again.",
+      });
       return false;
     }
   };

@@ -10,10 +10,8 @@ import { Input, Select } from "@/components/ui/input";
 import { dashClient } from "@/lib/client";
 import { explorerTxUrl, parseUsdcInput } from "@/lib/w5";
 import { useNear } from "@/wallet/near";
-import { checkIntent, signedIntent, type WithdrawIntent } from "./withdraw";
-
-/** The asset the shield moved: USDC on NEAR. A withdraw takes the same asset out. */
-const SOURCE_ASSET = "nep141:17208628f84f5d6ad33f0da3bbbeb27ffcb398eac501a31bd6ad2011e36133a1";
+import { usePrivateBalance } from "./money-trail-card";
+import { checkIntent, heldChain, signedIntent, type WithdrawIntent } from "./withdraw";
 
 /** The provider lists the payout transactions as strings or `{hash, explorerUrl}`; a missing link comes from our own map. */
 export function destinationTxs(v: unknown, chain: string): { hash: string; url: string | null }[] {
@@ -79,8 +77,13 @@ function problemText(code: string | undefined): string {
 }
 
 /** Withdraw from the confidential balance to a wallet: quote, sign the one message in your wallet, follow it to the end. */
-export function WithdrawCard({ approxUnits }: { approxUnits: bigint }) {
+export function WithdrawCard() {
   const near = useNear();
+  const [balance, unlock] = usePrivateBalance();
+  const tokens = balance.state === "ready" ? balance.tokens : [];
+  const [picked, setPicked] = useState<string | null>(null);
+  // The token to take it from: the one picked, else the largest held.
+  const source = tokens.find((t) => t.tokenId === picked) ?? tokens[0] ?? null;
   const [chain, setChain] = useState("near");
   const [address, setAddress] = useState("");
   const [amount, setAmount] = useState("");
@@ -99,17 +102,18 @@ export function WithdrawCard({ approxUnits }: { approxUnits: bigint }) {
 
   const units = parseUsdcInput(amount);
   const amountBad = units === null;
+  const overBalance = units !== null && source !== null && units > source.units;
   const addressBad = address.trim().length < 8;
 
   const getQuote = async () => {
     setShown(true);
     setProblem(null);
-    if (amountBad || addressBad || units === null) return;
+    if (amountBad || addressBad || units === null || source === null || overBalance) return;
     setStep("quoting");
     try {
       const r = (await dashClient.confidential.withdrawQuote({
         amount: units.toString(),
-        source_asset: SOURCE_ASSET,
+        source_asset: source.tokenId,
         destination_chain: chain,
         address: address.trim(),
       })) as { quote?: Record<string, unknown> };
@@ -154,9 +158,11 @@ export function WithdrawCard({ approxUnits }: { approxUnits: bigint }) {
         return setStep("done");
       }
       if (s.status === "REFUNDED" || s.status === "FAILED") {
-        console.log("withdraw ended", quote.depositAddress, s);
+        console.info("withdraw ended", quote.depositAddress, s);
         setProblem(
-          `It did not complete (${s.status}). The money stays in your confidential balance. Deposit address: ${quote.depositAddress}`,
+          s.status === "REFUNDED"
+            ? "It could not be completed, so it was returned to your confidential balance."
+            : "It could not be completed. Nothing left your confidential balance. Try again.",
         );
         return setStep("failed");
       }
@@ -238,15 +244,12 @@ export function WithdrawCard({ approxUnits }: { approxUnits: bigint }) {
   };
 
   const busy = step === "quoting" || step === "signing" || step === "following";
-  const approx = approxUnits > 0n ? usd(approxUnits.toString()) : null;
 
   return (
     <Card title="Withdraw from your confidential balance">
       <div className="space-y-3">
         <p className="caption">
-          {approx
-            ? `About ${approx} has been moved into your confidential balance. It is not shown here yet, so keep the amount at or below that.`
-            : "Move money from your confidential balance to a wallet on the chain you choose."}
+          Move money from your confidential balance to a wallet on the chain you choose.
         </p>
 
         {step === "review" || step === "signing" || step === "following" || step === "done" ? (
@@ -273,6 +276,41 @@ export function WithdrawCard({ approxUnits }: { approxUnits: bigint }) {
           </dl>
         ) : (
           <>
+            {balance.state === "ready" && tokens.length > 0 && source !== null ? (
+              <Select label="Take it from" value={source.tokenId} onValueChange={setPicked}>
+                {tokens.map((t) => {
+                  const h = heldChain(t.tokenId);
+                  return (
+                    <option
+                      key={t.tokenId}
+                      value={t.tokenId}
+                      data-icon={<ChainIcon chain={h.chain} />}
+                    >
+                      {`USDC from ${h.label}: ${usd(t.units.toString())}`}
+                    </option>
+                  );
+                })}
+              </Select>
+            ) : (
+              <div className="flex min-h-[72px] flex-wrap items-center justify-between gap-3 rounded-2xl border border-border p-4">
+                <p className="caption max-w-[40ch]">
+                  {balance.state === "ready"
+                    ? "Your confidential balance is empty."
+                    : balance.state === "error"
+                      ? balance.message
+                      : "Sign once with your wallet to see what you can withdraw."}
+                </p>
+                {balance.state === "ready" ? null : (
+                  <Button
+                    variant="secondary"
+                    loading={balance.state === "signing" || balance.state === "loading"}
+                    onClick={unlock}
+                  >
+                    Show my balance
+                  </Button>
+                )}
+              </div>
+            )}
             <Select label="Network" value={chain} onValueChange={setChain}>
               {CHAINS.map((c) => (
                 <option key={c.id} value={c.id} data-icon={<ChainIcon chain={c.chain} />}>
@@ -294,7 +332,13 @@ export function WithdrawCard({ approxUnits }: { approxUnits: bigint }) {
               value={amount}
               inputMode="decimal"
               onChange={(e) => setAmount(e.target.value)}
-              error={shown && amountBad ? "Enter an amount, for example 5.00." : undefined}
+              error={
+                shown && amountBad
+                  ? "Enter an amount, for example 5.00."
+                  : overBalance && source !== null
+                    ? `You have ${usd(source.units.toString())} there. Enter that or less.`
+                    : undefined
+              }
             />
           </>
         )}
@@ -329,15 +373,19 @@ export function WithdrawCard({ approxUnits }: { approxUnits: bigint }) {
         ) : null}
         {step === "register" || step === "registering" ? (
           <p role="status" className="text-[14px]">
-            One step first: your wallet's key has to be registered once with the confidential balance
-            contract. It is a tiny transaction. Then your withdrawal is sent.
+            One step first: your wallet's key has to be registered once with the confidential
+            balance contract. It is a tiny transaction. Then your withdrawal is sent.
           </p>
         ) : null}
         <ErrorNote>{problem}</ErrorNote>
 
         <div className="flex items-center justify-center gap-3">
           {step === "form" || step === "quoting" ? (
-            <Button loading={step === "quoting"} onClick={() => void getQuote()}>
+            <Button
+              loading={step === "quoting"}
+              disabled={source === null}
+              onClick={() => void getQuote()}
+            >
               {step === "quoting" ? "Getting the price" : "Get price"}
             </Button>
           ) : null}
