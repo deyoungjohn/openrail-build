@@ -13,6 +13,8 @@ export interface SignedChallenge {
   accountId: string;
   publicKey: string;
   signature: string;
+  /** `erc191` for an EVM wallet's personal_sign (no public key); NEP-413 otherwise. */
+  standard?: "nep413" | "erc191";
 }
 
 export interface ChallengeToSign {
@@ -76,12 +78,22 @@ export function liveAuth(baseUrl: string, f: AuthFetch = (url, init) => fetch(ur
       if (!cr.ok) throw new Error(await failure("CHALLENGE", cr));
       const c = (await cr.json()) as AuthChallenge;
       const signed = await sign({ message: c.message, nonce: c.nonce, recipient: c.recipient });
-      const vr = await post("/v1/auth/verify", {
-        account_id: signed.accountId,
-        public_key: signed.publicKey,
-        signature: signed.signature,
-        nonce: c.nonce,
-      });
+      const vr = await post(
+        "/v1/auth/verify",
+        signed.standard === "erc191"
+          ? {
+              standard: "erc191",
+              account_id: signed.accountId,
+              signature: signed.signature,
+              nonce: c.nonce,
+            }
+          : {
+              account_id: signed.accountId,
+              public_key: signed.publicKey,
+              signature: signed.signature,
+              nonce: c.nonce,
+            },
+      );
       if (!vr.ok) throw new Error(await failure("VERIFY", vr));
       const s = (await vr.json()) as AuthSession;
       // The body repeats the token for CLI use; the cookie is what the browser relies on.

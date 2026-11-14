@@ -135,6 +135,9 @@ export function implicitKeyMatches(accountId: string, publicKey: string): boolea
   }
 }
 
+/** An EVM address as an account id: lower case, so it is also the implicit NEAR account. */
+export const EVM_ACCOUNT = /^0x[0-9a-f]{40}$/;
+
 export class AuthStore {
   private readonly keys: ApiKeyStore;
   private readonly sessions: SessionStore;
@@ -243,9 +246,11 @@ export class AuthStore {
   challenge(accountId: string, recipient: string): Challenge {
     this.challenges.prune(this.clock());
     const nonce = randomBytes(32).toString("base64");
+    // An EVM address (`0x` + 40 hex, also its implicit NEAR account id) signs a plain message (EIP-191).
+    const evm = EVM_ACCOUNT.test(accountId);
     const challenge: Challenge = {
       nonce,
-      message: `${recipient} wants you to sign in with your NEAR account:\n\n${accountId}\n\nNonce: ${nonce}`,
+      message: `${recipient} wants you to sign in with your ${evm ? "Ethereum" : "NEAR"} account:\n\n${accountId}\n\nNonce: ${nonce}`,
       recipient,
       accountId,
       expiresAt: this.clock() + 5 * 60 * 1000,
@@ -277,6 +282,31 @@ export class AuthStore {
     if (!(await accessKey(input.accountId, input.publicKey))) {
       throw new AuthError(401, "wrong_signer");
     }
+    return this.openSession(input.accountId);
+  }
+
+  /**
+   * Sign-in with an EVM wallet: the wallet signed the challenge's message (EIP-191 personal_sign) and the signer is
+   * recovered from it. The account is the address in lower case, which is also its implicit NEAR account id.
+   */
+  async verifyEvm(
+    input: { accountId: string; signature: string; nonce: string },
+    recovers: (message: string, signature: string, address: string) => Promise<boolean>,
+  ) {
+    this.challenges.prune(this.clock());
+    const challenge = this.challenges.take(input.nonce);
+    if (challenge === undefined || challenge.expiresAt <= this.clock()) {
+      throw new AuthError(401, "challenge_expired");
+    }
+    if (challenge.accountId !== input.accountId || !EVM_ACCOUNT.test(input.accountId))
+      throw new AuthError(401, "wrong_account");
+    if (!(await recovers(challenge.message, input.signature, input.accountId).catch(() => false)))
+      throw new AuthError(401, "invalid_signature");
+    return this.openSession(input.accountId);
+  }
+
+  private openSession(accountId: string) {
+    const input = { accountId };
     const sessionToken = randomToken("or_sess_");
     const tokenHash = sha256Hex(sessionToken);
     const expiresAt = this.clock() + this.sessionMs;

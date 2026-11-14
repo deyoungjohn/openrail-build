@@ -39,7 +39,9 @@ interface EvmState {
   /** The name of the connected wallet. */
   connectedName: string | null;
   /** Connects the wallet with this id (the only one when there is just one), asking it which account to use. */
-  connect: (id?: string) => Promise<void>;
+  connect: (id?: string) => Promise<Address | null>;
+  /** Asks the wallet with this id to sign a plain message (EIP-191 personal_sign) from `address`. */
+  signText: (id: string, address: Address, message: string) => Promise<Hex>;
   /** Forgets the wallet: its permission is revoked where the wallet allows it, and it is not reconnected on reload. */
   disconnect: () => void;
   /**
@@ -179,7 +181,7 @@ export function EvmProvider({ children }: { children: ReactNode }) {
   const connect = useCallback(
     async (id?: string) => {
       const w = wallets.find((x) => x.id === id) ?? (wallets.length === 1 ? wallets[0] : undefined);
-      if (w === undefined) return;
+      if (w === undefined) return null;
       setError(false);
       try {
         // Ask the wallet for permission again, so it shows its account picker instead of reusing the last account.
@@ -192,11 +194,28 @@ export function EvmProvider({ children }: { children: ReactNode }) {
         setChosen(w);
         setAddress(first ?? null);
         writeStored(CHOSEN, w.id);
+        return first ?? null;
       } catch {
         setError(true);
+        return null;
       }
     },
     [wallets],
+  );
+
+  const signText = useCallback(
+    async (id: string, address: Address, message: string) => {
+      const w = wallets.find((x) => x.id === id) ?? chosen;
+      if (!w) throw new Error("wallet_not_connected");
+      return (await w.provider.request({
+        method: "personal_sign",
+        params: [
+          `0x${Array.from(new TextEncoder().encode(message), (b) => b.toString(16).padStart(2, "0")).join("")}`,
+          address,
+        ],
+      } as never)) as Hex;
+    },
+    [wallets, chosen],
   );
 
   const disconnect = useCallback(() => {
@@ -224,10 +243,11 @@ export function EvmProvider({ children }: { children: ReactNode }) {
       wallets,
       connectedName: chosen?.name ?? null,
       connect,
+      signText,
       disconnect,
       pay,
     }),
-    [address, wallets, error, chosen, connect, disconnect, pay],
+    [address, wallets, error, chosen, connect, signText, disconnect, pay],
   );
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

@@ -60,7 +60,7 @@ export function EvmWalletView({
   address: string | null;
   available: boolean;
   error: boolean;
-  connect: () => Promise<void> | void;
+  connect: () => Promise<unknown> | void;
   disconnect: () => void;
 }) {
   if (address)
