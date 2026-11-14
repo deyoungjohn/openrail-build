@@ -12,7 +12,6 @@ import {
 } from "react";
 import { copy } from "@/copy";
 import { auth, MOCK_MODE, MOCK_ACCOUNT } from "@/lib/auth";
-import { useEvm } from "@/wallet/evm";
 import { useNear } from "@/wallet/near";
 import { walletHint } from "@/wallet/hints";
 import { walletDetail } from "@/wallet/wallet-detail";
@@ -26,8 +25,6 @@ export type AuthState =
 interface AuthCtx {
   state: AuthState;
   signIn: () => Promise<void>;
-  /** Sign-in with an EVM wallet (MetaMask, Rabby, Coinbase…): the address signs a plain message. */
-  signInEvm: (walletId: string) => Promise<void>;
   /** A short hint about the wallet being used, shown while we wait for it. */
   hint: string | null;
   /** Stops waiting for the wallet (closed pop-up, app that never answers). */
@@ -58,7 +55,6 @@ export function useAuth() {
  */
 export function AuthProvider({ children }: { children: ReactNode }) {
   const near = useNear();
-  const evm = useEvm();
   const [state, setState] = useState<AuthState>({ status: "loading" });
   const [tick, setTick] = useState(0);
 
@@ -133,41 +129,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [near]);
 
-  const signInEvm = useCallback(
-    async (walletId: string) => {
-      try {
-        const address = await evm.connect(walletId);
-        if (address === null) throw new Error("The wallet did not share an address");
-        // The account is the address in lower case: also its implicit NEAR account id.
-        const accountId = address.toLowerCase();
-        const s = await auth.signIn(
-          async (c) => ({
-            accountId,
-            publicKey: "",
-            signature: await evm.signText(walletId, address, c.message),
-            standard: "erc191",
-          }),
-          accountId,
-        );
-        setState({ status: "signedIn", accountId: s.account_id });
-      } catch (e) {
-        const msg = e instanceof Error ? e.message : String(e);
-        if (/reject|declin|denied|cancel/i.test(msg)) {
-          setState({ status: "signedOut" });
-          return;
-        }
-        console.error("EVM sign-in failed", e);
-        setState({ status: "signedOut", failed: "failed", detail: walletDetail(e) });
-      }
-    },
-    [evm],
-  );
-
   const signOut = useCallback(async () => {
     try {
       await auth.signOut();
       setState({ status: "signedOut" });
-      evm.disconnect();
     } finally {
       // Wallet sign-out is best effort: the API session is what guards the dashboard.
       // Signing out of the wallet is best effort, and some wallets (Meteor) open a window for it. The API
@@ -176,12 +141,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         await near.signOut().catch(() => {});
       }
     }
-  }, [near, evm]);
+  }, [near]);
 
   const retry = useCallback(() => setTick((t) => t + 1), []);
   const value = useMemo(
-    () => ({ state, signIn, signInEvm, hint, cancelSignIn, signOut, retry }),
-    [state, signIn, signInEvm, hint, cancelSignIn, signOut, retry],
+    () => ({ state, signIn, hint, cancelSignIn, signOut, retry }),
+    [state, signIn, hint, cancelSignIn, signOut, retry],
   );
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

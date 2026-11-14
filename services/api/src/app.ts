@@ -1,4 +1,3 @@
-import { verifyMessage } from "viem";
 /** Core API implementation (S1b). Dependencies are ports so tests stay offline. */
 import { randomBytes } from "node:crypto";
 import {
@@ -1418,34 +1417,7 @@ export class ApiApp {
           public_key?: string;
           signature?: string;
           nonce?: string;
-          standard?: string;
         };
-        if (body.standard === "erc191") {
-          if (!body.account_id || !body.signature || !body.nonce)
-            throw new ApiError(
-              400,
-              "invalid_request",
-              "account_id, signature and nonce are required",
-            );
-          const session = await this.auth.verifyEvm(
-            { accountId: body.account_id, signature: body.signature, nonce: body.nonce },
-            (message, signature, address) =>
-              verifyMessage({
-                address: address as `0x${string}`,
-                message,
-                signature: signature as `0x${string}`,
-              }),
-          );
-          return {
-            status: 200,
-            headers: { "set-cookie": sessionCookie(session.sessionToken, 7 * 24 * 60 * 60) },
-            body: {
-              session_token: session.sessionToken,
-              account_id: session.accountId,
-              expires_at: session.expiresAt,
-            },
-          };
-        }
         if (!body.account_id || !body.public_key || !body.signature || !body.nonce) {
           throw new ApiError(
             400,

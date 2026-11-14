@@ -415,7 +415,6 @@ export const copy = {
     refundNone: "Connect the wallet you pay from so any refund goes back to it.",
   },
   auth: {
-    evmTitle: "Or sign in with an EVM wallet (MetaMask, Rabby, Coinbase and others):",
     title: "Sign in to Openrail",
     body: "Sign in with your NEAR account. You sign one message in your wallet. It costs nothing, and you stay signed in on this device for a week.",
     failed: "We couldn't sign you in. Nothing was changed. Check your wallet and try again.",
@@ -853,9 +852,7 @@ export const copy = {
         sending: (chain: string) =>
           chain === "confidential" ? "Moved to your confidential balance" : `Sent to ${chain}`,
         arrived: (chain: string) =>
-          chain === "confidential"
-            ? "Credited to your confidential balance"
-            : "Arrived at your address",
+          chain === "confidential" ? "Credited to your confidential balance" : "Arrived at your address",
       },
       notes: {
         quoted: "Nothing has left your balance yet.",

@@ -7,14 +7,12 @@ import { copy } from "@/copy";
 import { Button } from "../ui/button";
 import { PageSkeleton } from "../ui/page-skeleton";
 import { ErrorState } from "../ui/state";
-import { useEvm } from "@/wallet/evm";
 import { useAuth } from "./auth-provider";
 import { ErrorNote } from "@/components/ui/error-note";
 
 /** Dashboard content only renders for a signed-in business. */
 export function AuthGate({ children }: { children: ReactNode }) {
-  const { state, signIn, signInEvm, hint, cancelSignIn, retry } = useAuth();
-  const evm = useEvm();
+  const { state, signIn, hint, cancelSignIn, retry } = useAuth();
   const [busy, setBusy] = useState(false);
   const router = useRouter();
   // Right after signing in (not on a reload of a signed-in page): a new business starts at onboarding, an existing
@@ -75,44 +73,6 @@ export function AuthGate({ children }: { children: ReactNode }) {
               {copy.auth.cancel}
             </Button>
           ) : null}
-        </div>
-        {/* EVM wallets sign in with their address (its implicit NEAR account); each installed one is offered. */}
-        <div className="space-y-2 border-t border-border pt-4">
-          <p className="caption">{copy.auth.evmTitle}</p>
-          {evm.wallets.length === 0 ? (
-            <p className="caption">{copy.wallet.noEvmWallet}</p>
-          ) : (
-            <div className="flex flex-wrap gap-2">
-              {evm.wallets.map((w) => (
-                <Button
-                  key={w.id}
-                  variant="secondary"
-                  size="sm"
-                  disabled={busy}
-                  onClick={async () => {
-                    setBusy(true);
-                    justSignedIn.current = true;
-                    try {
-                      await signInEvm(w.id);
-                    } finally {
-                      setBusy(false);
-                    }
-                  }}
-                >
-                  {w.icon ? (
-                    <img
-                      src={w.icon}
-                      alt=""
-                      width={18}
-                      height={18}
-                      className="size-[18px] rounded"
-                    />
-                  ) : null}
-                  {w.name}
-                </Button>
-              ))}
-            </div>
-          )}
         </div>
       </div>
     );
