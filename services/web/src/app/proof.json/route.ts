@@ -7,7 +7,7 @@ export function GET() {
   return Response.json({
     contract: PROOF_CONTRACT,
     network: "near-mainnet",
-    note: "Business transactions of the Openrail contract, newest first. Private-balance deposits and withdrawals are not listed.",
+    note: "Business transactions of the Openrail contract, newest first. Confidential-balance deposits and withdrawals are not listed.",
     transactions: PROOF_ROWS.map((r) => ({
       type: r.type,
       amount_usd: r.amount_usd,

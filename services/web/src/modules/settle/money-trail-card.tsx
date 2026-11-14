@@ -32,13 +32,13 @@ const TYPES = ["settle_held", "settle_sent", "settle_settled", "settle_refunded"
 function heldHint(schedule: string | null): string {
   switch (schedule) {
     case "each_payment":
-      return "Booked to you. It moves to your private balance within a few minutes.";
+      return "Booked to you. It moves to your confidential balance within a few minutes.";
     case "daily":
-      return "Booked to you. It moves to your private balance once a day.";
+      return "Booked to you. It moves to your confidential balance once a day.";
     case "weekly":
-      return "Booked to you. It moves to your private balance once a week.";
+      return "Booked to you. It moves to your confidential balance once a week.";
     case "monthly":
-      return "Booked to you. It moves to your private balance once a month.";
+      return "Booked to you. It moves to your confidential balance once a month.";
     case "manual":
       return "Booked to you. Nothing moves until you choose a schedule.";
     default:
@@ -48,13 +48,13 @@ function heldHint(schedule: string | null): string {
 
 const WORDS: Record<TrailStage, { label: string; hint: string }> = {
   held: { label: "Held", hint: "Booked to you and waiting to be moved on your schedule." },
-  sending: { label: "On its way", hint: "Being moved to your private balance." },
-  private: { label: "In your private balance", hint: "Moved. Only you can see it there." },
+  sending: { label: "On its way", hint: "Being moved to your confidential balance." },
+  private: { label: "In your confidential balance", hint: "Moved. Only you can see it there." },
   returned: {
     label: "Returned",
     hint: "The move did not complete and the money came back to you.",
   },
-  withdrawn: { label: "Withdrawn", hint: "Sent from your private balance to your wallet." },
+  withdrawn: { label: "Withdrawn", hint: "Sent from your confidential balance to your wallet." },
 };
 
 /** "Arbiscan", "Basescan", "NearBlocks": the explorer's name from its link, for the link text. */
@@ -85,7 +85,7 @@ type PrivateBalance =
   | { state: "error"; message: string };
 
 /**
- * The real private balance, from the provider. Reading it needs a session the merchant signs once (an empty intent with
+ * The real confidential balance, from the provider. Reading it needs a session the merchant signs once (an empty intent with
  * a versioned nonce, prepared by the API); the API keeps the session, so the browser never holds the provider's token.
  */
 function usePrivateBalance(): [PrivateBalance, () => void] {
@@ -105,7 +105,7 @@ function usePrivateBalance(): [PrivateBalance, () => void] {
         setValue({ state: "locked" });
         return false;
       }
-      setValue({ state: "error", message: "We couldn't read your private balance. Try again." });
+      setValue({ state: "error", message: "We couldn't read your confidential balance. Try again." });
       return false;
     }
   };
@@ -129,14 +129,14 @@ function usePrivateBalance(): [PrivateBalance, () => void] {
       await read();
     } catch (e) {
       const msg = (e as Error).message ?? "";
-      console.error("private balance sign-in failed", e);
+      console.error("confidential balance sign-in failed", e);
       setValue({
         state: "error",
         message: /reject|declin|cancel/i.test(msg)
           ? "You declined it in your wallet."
           : (e as { code?: string }).code === "confidential_auth_failed"
             ? "The provider refused the signature. Check that this wallet key is registered (make one withdrawal first)."
-            : "We couldn't open your private balance. Try again.",
+            : "We couldn't open your confidential balance. Try again.",
       });
     }
   };
@@ -196,7 +196,7 @@ function Tile({
   );
 }
 
-/** Where the money is: held, on its way, in the private balance, or returned. Read from the settle events, no chain call. */
+/** Where the money is: held, on its way, in the confidential balance, or returned. Read from the settle events, no chain call. */
 /** The trail of the merchant's held shares, read once for the cards that show it. */
 export function useTrail() {
   return useAsync(async () => {
@@ -361,11 +361,11 @@ export function MoneyTrailCard({ trail }: { trail: ReturnType<typeof useTrail> }
         <Tile label="Held" cents={cents(totals.held)} hint={words.held.hint} />
         <Tile label="On its way" cents={cents(totals.sending)} hint={words.sending.hint} />
         <Tile
-          label="In your private balance"
+          label="In your confidential balance"
           cents={privateBalance.state === "ready" ? cents(privateBalance.units) : null}
           hint={
             privateBalance.state === "ready"
-              ? "Read from your private balance just now. Only you can see it."
+              ? "Read from your confidential balance just now. Only you can see it."
               : "Sign once with your wallet to see the real amount."
           }
         >
@@ -394,7 +394,7 @@ export function MoneyTrailCard({ trail }: { trail: ReturnType<typeof useTrail> }
           data={rows}
           columns={columns}
           rowId={(r) => r.key}
-          caption="Each payment moved to your private balance, each withdrawal from it, and where it is now"
+          caption="Each payment moved to your confidential balance, each withdrawal from it, and where it is now"
           pageSize={10}
           defaultSort={{ id: "date", dir: "desc" }}
           loading={data.state === "loading"}
@@ -405,7 +405,7 @@ export function MoneyTrailCard({ trail }: { trail: ReturnType<typeof useTrail> }
           }
           emptyState={{
             title: "Nothing moved yet",
-            body: "When a payment is held or moved to your private balance, it is followed here.",
+            body: "When a payment is held or moved to your confidential balance, it is followed here.",
           }}
           expandedRow={(r) =>
             r.withdrawal ? (

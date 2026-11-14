@@ -15,7 +15,7 @@ const ev = (type: string, created: number, data: Record<string, unknown>): Trail
 });
 
 describe("money trail", () => {
-  it("follows a share from held to the private balance", () => {
+  it("follows a share from held to the confidential balance", () => {
     const rows = buildTrail([
       ev("settle_held", 100, { token_id: "c-1", index: 0, amount: "1995000" }),
       ev("settle_sent", 200, { token_id: "c-1", index: 0, amount_in: "1995000", payout_id: 1 }),
@@ -107,7 +107,7 @@ describe("withdrawals in the trail", () => {
 });
 
 describe("the contract's state over stale events", () => {
-  it("shows a share whose payout finished as in the private balance", () => {
+  it("shows a share whose payout finished as in the confidential balance", () => {
     const rows = buildTrail([
       {
         id: "e1",

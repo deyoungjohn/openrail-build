@@ -38,7 +38,7 @@ export default function ProofPage() {
             {PROOF_CONTRACT}
           </a>
           , on NEAR mainnet: invoices and checkouts issued, payments booked, late payments refunded.
-          Each row links to the explorer, so anyone can check it. Private-balance deposits and
+          Each row links to the explorer, so anyone can check it. Confidential-balance deposits and
           withdrawals are not listed. The same list is at{" "}
           <a href="/proof.json" className="font-mono text-accent-text hover:underline">
             /proof.json

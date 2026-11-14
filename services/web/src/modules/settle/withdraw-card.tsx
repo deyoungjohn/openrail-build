@@ -70,15 +70,15 @@ function problemText(code: string | undefined): string {
     case "invalid_amount":
       return "That amount is not valid.";
     case "intents_key_not_registered":
-      return "Your wallet key is not registered for private withdrawals yet.";
+      return "Your wallet key is not registered for confidential withdrawals yet.";
     case "confidential_intents_disabled":
-      return "Private balance withdrawals are not switched on yet.";
+      return "Confidential balance withdrawals are not switched on yet.";
     default:
       return `We couldn't do that. Nothing was moved${code ? ` (${code})` : ""}.`;
   }
 }
 
-/** Withdraw from the private balance to a wallet: quote, sign the one message in your wallet, follow it to the end. */
+/** Withdraw from the confidential balance to a wallet: quote, sign the one message in your wallet, follow it to the end. */
 export function WithdrawCard({ approxUnits }: { approxUnits: bigint }) {
   const near = useNear();
   const [chain, setChain] = useState("near");
@@ -156,7 +156,7 @@ export function WithdrawCard({ approxUnits }: { approxUnits: bigint }) {
       if (s.status === "REFUNDED" || s.status === "FAILED") {
         console.log("withdraw ended", quote.depositAddress, s);
         setProblem(
-          `It did not complete (${s.status}). The money stays in your private balance. Deposit address: ${quote.depositAddress}`,
+          `It did not complete (${s.status}). The money stays in your confidential balance. Deposit address: ${quote.depositAddress}`,
         );
         return setStep("failed");
       }
@@ -241,12 +241,12 @@ export function WithdrawCard({ approxUnits }: { approxUnits: bigint }) {
   const approx = approxUnits > 0n ? usd(approxUnits.toString()) : null;
 
   return (
-    <Card title="Withdraw from your private balance">
+    <Card title="Withdraw from your confidential balance">
       <div className="space-y-3">
         <p className="caption">
           {approx
-            ? `About ${approx} has been moved into your private balance. It is not shown here yet, so keep the amount at or below that.`
-            : "Move money from your private balance to a wallet on the chain you choose."}
+            ? `About ${approx} has been moved into your confidential balance. It is not shown here yet, so keep the amount at or below that.`
+            : "Move money from your confidential balance to a wallet on the chain you choose."}
         </p>
 
         {step === "review" || step === "signing" || step === "following" || step === "done" ? (
@@ -329,7 +329,7 @@ export function WithdrawCard({ approxUnits }: { approxUnits: bigint }) {
         ) : null}
         {step === "register" || step === "registering" ? (
           <p role="status" className="text-[14px]">
-            One step first: your wallet's key has to be registered once with the private balance
+            One step first: your wallet's key has to be registered once with the confidential balance
             contract. It is a tiny transaction. Then your withdrawal is sent.
           </p>
         ) : null}

@@ -33,7 +33,7 @@ import { ErrorNote } from "@/components/ui/error-note";
 
 // Cash-out destinations (blueprint 2.9). Not BNB Chain: it cannot be quoted (K11).
 type Destination = Exclude<ChainId, "bnb"> | "confidential";
-// "confidential" moves the merchant's own balance to their private (Near Intents confidential) balance: no address is
+// "confidential" moves the merchant's own balance to their Near Intents confidential balance: no address is
 // asked, it is their own account. Offered only when the build says the API has it switched on.
 const PRIVATE_BALANCE = process.env.NEXT_PUBLIC_CONFIDENTIAL_INTENTS === "1";
 // NEAR first: it is the default everywhere (human, 13 Nov).
@@ -177,7 +177,7 @@ export function CashoutScreen() {
 
   const busy = phase === "asking" || phase === "signing";
 
-  // Public and private: the public balance is this page; an enabled module adds its own tab (the private balance).
+  // Public and private: the public balance is this page; an enabled module adds its own tab (the confidential balance).
   const withSections = (publicPanel: ReactNode) =>
     payoutSections.length === 0 ? (
       publicPanel

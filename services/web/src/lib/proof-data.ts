@@ -1,6 +1,6 @@
 /**
  * Real transactions of the Openrail contract (`openrail.near`) on NEAR mainnet, read from the chain on 13 Nov 2026.
- * Each one is checkable on the explorer. Private-balance deposits and withdrawals are left out. Static: the page makes
+ * Each one is checkable on the explorer. Confidential-balance deposits and withdrawals are left out. Static: the page makes
  * no call to show them.
  */
 export interface ProofRow {

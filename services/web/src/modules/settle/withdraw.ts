@@ -1,4 +1,4 @@
-/** Pure parts of the private-balance withdrawal: the exact payload the wallet signs and what is sent back. */
+/** Pure parts of the confidential-balance withdrawal: the exact payload the wallet signs and what is sent back. */
 
 const ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 

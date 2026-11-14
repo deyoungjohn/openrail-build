@@ -104,14 +104,14 @@ function PrivateBalanceCard({ accountId }: { accountId: string }) {
   const on = ready && privateBalanceOn(settlement, accountId);
   return (
     <Card
-      title="Private balance"
+      title="Confidential balance"
       state={settlement === "loading" ? "loading" : settlement === "error" ? "error" : "ready"}
       onRetry={() => void load()}
     >
       <div className="space-y-2">
         <p className="caption">
           {on
-            ? "On. Payments of $1 or more are held, then moved into your private balance on your schedule."
+            ? "On. Payments of $1 or more are held, then moved into your confidential balance on your schedule."
             : "Off. Payments go to your public balance."}
         </p>
         <ErrorNote>{failed ? "The change was not signed. Nothing changed." : null}</ErrorNote>
@@ -151,13 +151,13 @@ function StatsPanel() {
   );
 }
 
-/** The private balance on the Pay out page: take money out of it, and see where it is. (Its settings are in Settings.) */
+/** The confidential balance on the Pay out page: take money out of it, and see where it is. (Its settings are in Settings.) */
 export function PayoutsPanel() {
   const auth = useAuth();
   return (
     <div className="space-y-6 py-1">
       <Tabs
-        label="Private balance"
+        label="Confidential balance"
         items={[
           {
             id: "withdraw",
@@ -175,7 +175,7 @@ export function PayoutsPanel() {
   );
 }
 
-/** The Payouts tab of Settings: just the two settings (the private balance on or off, and the schedule). */
+/** The Payouts tab of Settings: just the two settings (the confidential balance on or off, and the schedule). */
 export function PayoutSettingsPanel() {
   const auth = useAuth();
   return (

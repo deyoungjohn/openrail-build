@@ -55,13 +55,13 @@ export function ChainsMarquee() {
   );
 }
 
-/** A drawn private-balance screen (the live one needs a wallet signature, so the ring shows this). */
+/** A drawn confidential-balance screen (the live one needs a wallet signature, so the ring shows this). */
 function PrivateBalanceMock() {
   const rows: [string, string, string][] = [
     ["Nov 13, 2026", "$30.00", "Withdrawn"],
-    ["Nov 13, 2026", "$26.93", "In your private balance"],
-    ["Nov 13, 2026", "$27.93", "In your private balance"],
-    ["Nov 13, 2026", "$9.97", "In your private balance"],
+    ["Nov 13, 2026", "$26.93", "In your confidential balance"],
+    ["Nov 13, 2026", "$27.93", "In your confidential balance"],
+    ["Nov 13, 2026", "$9.97", "In your confidential balance"],
   ];
   return (
     <div className="flex size-full flex-col gap-3 bg-[#0b0b0f] p-5 text-[#eef0f6]">
@@ -69,13 +69,13 @@ function PrivateBalanceMock() {
         {[
           ["Held", "$0.00"],
           ["On its way", "$0.00"],
-          ["In your private balance", "$86.80"],
+          ["In your confidential balance", "$86.80"],
           ["Returned", "$0.00"],
         ].map(([k, v]) => (
           <div key={k} className="rounded-xl border border-[#2b2b33] bg-[#121216] p-3">
             <p className="text-[10.5px] text-[#9aa3b2]">{k}</p>
             <p
-              className={`mt-1 text-[20px] font-bold ${k === "In your private balance" ? "text-[#8b90ff]" : ""}`}
+              className={`mt-1 text-[20px] font-bold ${k === "In your confidential balance" ? "text-[#8b90ff]" : ""}`}
             >
               {v}
             </p>
@@ -118,7 +118,7 @@ const SCREENS: RingItem[] = [
     image: "/landing/public_payout.webp",
   },
   {
-    title: "Private balance",
+    title: "Confidential balance",
     description: "Payments move to a balance only you can see, and leave it when you say.",
     node: <PrivateBalanceMock />,
   },
@@ -167,8 +167,8 @@ const FEATURES = [
   },
   {
     icon: Lock,
-    title: "Private Payouts",
-    body: "Move payments to a private balance on NEAR Intents and withdraw to any chain.",
+    title: "Confidential Payouts",
+    body: "Move payments to a confidential balance on NEAR Intents and withdraw to any chain.",
   },
   {
     icon: Code2,
@@ -228,8 +228,8 @@ const QA = [
     a: "Every payment is booked by the contract openrail.near on NEAR mainnet. Each receipt links to the transactions on the explorer, and the Proof page lists recent ones.",
   },
   {
-    q: "Can I keep my balance private?",
-    a: "Yes. Turn on the private balance and payments move to NEAR Intents' confidential balance, which only you can see. Withdraw from it to any supported chain.",
+    q: "Can I keep my balance confidential?",
+    a: "Yes. Turn on the confidential balance and payments move to NEAR Intents' confidential balance, which only you can see. Withdraw from it to any supported chain.",
   },
   {
     q: "Does it work with my store?",

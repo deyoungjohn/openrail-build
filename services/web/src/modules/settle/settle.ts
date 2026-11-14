@@ -22,7 +22,7 @@ export interface Settlement {
   min_amount: string;
 }
 
-/** The private balance is on when the destination is the caller's own account on the `confidential` chain. */
+/** The confidential balance is on when the destination is the caller's own account on the `confidential` chain. */
 export function privateBalanceOn(settlement: Settlement | null, accountId: string): boolean {
   return settlement?.chain === "confidential" && settlement.address === accountId;
 }

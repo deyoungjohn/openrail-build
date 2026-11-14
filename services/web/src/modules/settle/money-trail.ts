@@ -1,4 +1,4 @@
-/** Where a merchant's money is: one row per held share, followed from the booking to the private balance. */
+/** Where a merchant's money is: one row per held share, followed from the booking to the confidential balance. */
 
 export type TrailStage = "held" | "sending" | "private" | "returned" | "withdrawn";
 
@@ -35,7 +35,7 @@ export interface WithdrawalJson {
   destination_explorer_urls: string[];
 }
 
-/** One row per withdrawal started on this site: money leaving the private balance. */
+/** One row per withdrawal started on this site: money leaving the confidential balance. */
 export function withdrawalRows(list: readonly WithdrawalJson[]): TrailRow[] {
   return list.map((w) => ({
     key: `w:${w.deposit_address}`,
@@ -136,7 +136,7 @@ export interface TrailTotals {
   sending: bigint;
   private: bigint;
   returned: bigint;
-  /** Withdrawn from the private balance (SUCCESS only). */
+  /** Withdrawn from the confidential balance (SUCCESS only). */
   withdrawn: bigint;
 }
 

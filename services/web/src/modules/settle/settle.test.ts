@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { clearSettlementCall, privateBalanceOn, setPrivateCall, SCHEDULES } from "./settle";
 
 describe("settle settings", () => {
-  it("the private balance is on only for the caller's own confidential destination", () => {
+  it("the confidential balance is on only for the caller's own confidential destination", () => {
     const own = { chain: "confidential", address: "me.near", min_amount: "1000000" };
     expect(privateBalanceOn(own, "me.near")).toBe(true);
     expect(privateBalanceOn({ ...own, address: "other.near" }, "me.near")).toBe(false);

@@ -848,9 +848,9 @@ export const copy = {
         balance: () => "Leaves your balance",
         bridge: () => "Received by the bridge",
         sending: (chain: string) =>
-          chain === "confidential" ? "Moved to your private balance" : `Sent to ${chain}`,
+          chain === "confidential" ? "Moved to your confidential balance" : `Sent to ${chain}`,
         arrived: (chain: string) =>
-          chain === "confidential" ? "Credited to your private balance" : "Arrived at your address",
+          chain === "confidential" ? "Credited to your confidential balance" : "Arrived at your address",
       },
       notes: {
         quoted: "Nothing has left your balance yet.",
@@ -874,7 +874,7 @@ export const copy = {
       time: "Time",
       asset: "Asset",
       chain: "Network",
-      privateBalance: "Private balance",
+      privateBalance: "Confidential balance",
       amount: "Amount",
       destination: "Destination",
       tx: "Transactions",
@@ -935,10 +935,10 @@ export const copy = {
     signing: "Waiting for your wallet",
     sent: "Cash-out sent",
     again: "Cash out again",
-    privateBalance: "Private balance",
+    privateBalance: "Confidential balance",
     privateHelp:
-      "Moves the amount to your private balance on Near Intents. It stays yours; it is just not shown on the public chain. No address needed.",
-    onPrivate: "in your private balance",
+      "Moves the amount to your confidential balance on Near Intents. It stays yours; it is just not shown on the public chain. No address needed.",
+    onPrivate: "in your confidential balance",
     tabsLabel: "Pay out",
     tabCashOut: "Withdraw",
     tabPublic: "Public",
