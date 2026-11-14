@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ErrorNote } from "@/components/ui/error-note";
 import { Input, Select } from "@/components/ui/input";
+import { RangeSlider } from "@/components/ui/range-slider";
 import { dashClient } from "@/lib/client";
 import { explorerTxUrl, parseUsdcInput } from "@/lib/w5";
 import { useNear } from "@/wallet/near";
@@ -104,6 +105,19 @@ export function WithdrawCard() {
   const amountBad = units === null;
   const overBalance = units !== null && source !== null && units > source.units;
   const addressBad = address.trim().length < 8;
+  // The slider is the share of the picked token's balance; typing an amount moves it.
+  const percent =
+    source !== null && source.units > 0n && units !== null
+      ? Math.min(100, Number((units * 100n) / source.units))
+      : 0;
+  const setPercent = (p: number) => {
+    if (source === null) return;
+    // 100 % is all of it, to the last unit, so nothing is left behind; below that, whole cents.
+    const u =
+      p >= 100 ? source.units : ((source.units * BigInt(Math.round(p))) / 100n / 10_000n) * 10_000n;
+    const frac = (u % 1_000_000n).toString().padStart(6, "0").replace(/0+$/, "");
+    setAmount(`${u / 1_000_000n}.${frac.length < 2 ? frac.padEnd(2, "0") : frac}`);
+  };
 
   const getQuote = async () => {
     setShown(true);
@@ -286,7 +300,7 @@ export function WithdrawCard() {
                       value={t.tokenId}
                       data-icon={<ChainIcon chain={h.chain} />}
                     >
-                      {`USDC from ${h.label}: ${usd(t.units.toString())}`}
+                      {`${h.short} USDC · ${usd(t.units.toString())}`}
                     </option>
                   );
                 })}
@@ -311,35 +325,58 @@ export function WithdrawCard() {
                 )}
               </div>
             )}
-            <Select label="Network" value={chain} onValueChange={setChain}>
-              {CHAINS.map((c) => (
-                <option key={c.id} value={c.id} data-icon={<ChainIcon chain={c.chain} />}>
-                  {c.label}
-                </option>
-              ))}
-            </Select>
-            <Input
-              label="Wallet address"
-              value={address}
-              autoCapitalize="none"
-              autoComplete="off"
-              spellCheck={false}
-              onChange={(e) => setAddress(e.target.value.trim())}
-              error={shown && addressBad ? "Enter the address you want it sent to." : undefined}
-            />
-            <Input
-              label="Amount (USDC)"
-              value={amount}
-              inputMode="decimal"
-              onChange={(e) => setAmount(e.target.value)}
-              error={
-                shown && amountBad
-                  ? "Enter an amount, for example 5.00."
-                  : overBalance && source !== null
-                    ? `You have ${usd(source.units.toString())} there. Enter that or less.`
-                    : undefined
-              }
-            />
+            {source === null ? null : (
+              <>
+                <p className="text-[15px]">
+                  Available to withdraw now:{" "}
+                  <span className="tabular font-semibold">{usd(source.units.toString())}</span>
+                  <span className="caption"> {heldChain(source.tokenId).short} USDC</span>
+                </p>
+                <Input
+                  label="Amount (USDC)"
+                  value={amount}
+                  inputMode="decimal"
+                  onChange={(e) => setAmount(e.target.value)}
+                  error={
+                    shown && amountBad
+                      ? "Enter an amount, for example 5.00."
+                      : overBalance && source !== null
+                        ? `You have ${usd(source.units.toString())} there. Enter that or less.`
+                        : undefined
+                  }
+                />
+                <RangeSlider
+                  aria-label="Share of your confidential balance to withdraw"
+                  value={percent}
+                  onChange={setPercent}
+                  snapPoints={[0, 25, 50, 75, 100]}
+                  marks={[
+                    { value: 25, label: "25%" },
+                    { value: 50, label: "50%" },
+                    { value: 75, label: "75%" },
+                    { value: 100, label: "100%" },
+                  ]}
+                  format={(p) => `${p}%`}
+                  disabled={busy}
+                />
+                <Select label="Network" value={chain} onValueChange={setChain}>
+                  {CHAINS.map((c) => (
+                    <option key={c.id} value={c.id} data-icon={<ChainIcon chain={c.chain} />}>
+                      {c.label}
+                    </option>
+                  ))}
+                </Select>
+                <Input
+                  label="Wallet address"
+                  value={address}
+                  autoCapitalize="none"
+                  autoComplete="off"
+                  spellCheck={false}
+                  onChange={(e) => setAddress(e.target.value.trim())}
+                  error={shown && addressBad ? "Enter the address you want it sent to." : undefined}
+                />
+              </>
+            )}
           </>
         )}
 

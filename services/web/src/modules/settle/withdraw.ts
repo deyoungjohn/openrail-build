@@ -107,9 +107,10 @@ export function checkIntent(
  * (It used to always take USDC on NEAR: once payments settled on Solana and Base, that one was empty and the provider
  * ended every withdrawal as FAILED.)
  */
-export function heldChain(tokenId: string): { label: string; chain: ChainId } {
-  if (tokenId.startsWith("nep141:sol-")) return { label: "Solana", chain: "solana" };
-  if (tokenId.startsWith("nep141:base-")) return { label: "Base", chain: "base" };
-  if (tokenId.startsWith("nep141:arb-")) return { label: "Arbitrum", chain: "arbitrum" };
-  return { label: "NEAR", chain: "near" };
+export function heldChain(tokenId: string): { label: string; short: string; chain: ChainId } {
+  if (tokenId.startsWith("nep141:sol-")) return { label: "Solana", short: "SOL", chain: "solana" };
+  if (tokenId.startsWith("nep141:base-")) return { label: "Base", short: "BASE", chain: "base" };
+  if (tokenId.startsWith("nep141:arb-"))
+    return { label: "Arbitrum", short: "ARB", chain: "arbitrum" };
+  return { label: "NEAR", short: "NEAR", chain: "near" };
 }
